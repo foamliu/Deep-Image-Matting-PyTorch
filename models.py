@@ -1,7 +1,7 @@
 import torch.nn as nn
 from torchsummary import summary
 
-from config import device, imsize
+from config import device, im_size
 
 
 class conv2DBatchNormRelu(nn.Module):
@@ -100,7 +100,7 @@ class segnetUp3(nn.Module):
         return outputs
 
 
-class SegNet(nn.Module):
+class DIMModel(nn.Module):
     def __init__(self, n_classes=3, in_channels=3, is_unpooling=True):
         super(SegNet, self).__init__()
 
@@ -172,6 +172,6 @@ class SegNet(nn.Module):
 
 
 if __name__ == '__main__':
-    model = SegNet().to(device)
+    model = DIMModel().to(device)
 
-    summary(model, (3, imsize, imsize))
+    summary(model, (3, im_size, im_size))
