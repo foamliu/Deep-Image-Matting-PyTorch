@@ -149,8 +149,8 @@ class DIMDataset(Dataset):
         alpha = transforms.ToPILImage()(alpha)
         alpha = self.transformer(alpha)
 
-        x = img / 255.
-        y = alpha / 255.
+        x[:, :, :] = img / 255.
+        y[:, :, :] = alpha / 255.
 
         return x, y
 
