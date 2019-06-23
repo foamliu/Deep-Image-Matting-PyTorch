@@ -117,9 +117,6 @@ class DIMDataset(Dataset):
         self.transformer = data_transforms[split]
 
     def __getitem__(self, i):
-        x = np.empty((im_size, im_size, 3), dtype=np.float)
-        y = np.empty((im_size, im_size, 1), dtype=np.float)
-
         name = self.names[i]
         fcount = int(name.split('.')[0].split('_')[0])
         bcount = int(name.split('.')[0].split('_')[1])
@@ -149,10 +146,10 @@ class DIMDataset(Dataset):
         alpha = transforms.ToPILImage()(alpha)
         alpha = self.transformer(alpha)
 
-        x[:, :, :] = img / 255.
-        y[:, :, :] = alpha / 255.
+        img = img / 255.
+        alpha = alpha / 255.
 
-        return x, y
+        return img, alpha
 
     def __len__(self):
         return len(self.names)
