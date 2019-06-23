@@ -6,8 +6,8 @@ from torch import nn
 from config import device, grad_clip, print_freq
 from data_gen import DIMDataset
 from models import DIMModel
-from utils import parse_args, save_checkpoint, AverageMeter, clip_gradient, get_logger, adjust_learning_rate
 from pre_process import do_composite
+from utils import parse_args, save_checkpoint, AverageMeter, clip_gradient, get_logger, adjust_learning_rate
 
 
 def train_net(args):
@@ -104,7 +104,7 @@ def train(train_loader, model, criterion, optimizer, epoch, logger):
     # Batches
     for img, alpha_label in train_loader:
         # Move to GPU, if available
-        img = img.type(torch.FloatTensor).to(device)
+        img = img.type(torch.FloatTensor).to(device)  # [320, 320, 3]
         alpha_label = alpha_label.type(torch.FloatTensor).to(device)  # [320, 320, 1]
 
         # Forward prop.
@@ -143,7 +143,7 @@ def valid(valid_loader, model, criterion, logger):
     # Batches
     for img, alpha_label in valid_loader:
         # Move to GPU, if available
-        img = img.type(torch.FloatTensor).to(device)
+        img = img.type(torch.FloatTensor).to(device)  # [320, 320, 3]
         alpha_label = alpha_label.type(torch.FloatTensor).to(device)  # [320, 320, 1]
 
         # Forward prop.
