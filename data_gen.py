@@ -117,8 +117,8 @@ class DIMDataset(Dataset):
         self.transformer = data_transforms[split]
 
     def __getitem__(self, i):
-        x = np.empty((im_size, im_size, 3), dtype=np.float32)
-        y = np.empty((im_size, im_size, 1), dtype=np.float32)
+        x = np.empty((im_size, im_size, 3), dtype=np.float)
+        y = np.empty((im_size, im_size, 1), dtype=np.float)
 
         name = self.names[i]
         fcount = int(name.split('.')[0].split('_')[0])
