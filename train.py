@@ -104,7 +104,7 @@ def train(train_loader, model, criterion, optimizer, epoch, logger):
     # Batches
     for img, alpha_label in train_loader:
         # Move to GPU, if available
-        img = img.to(device)
+        img = img.type(torch.FloatTensor).to(device)
         alpha_label = alpha_label.type(torch.FloatTensor).to(device)  # [320, 320, 1]
 
         # Forward prop.
@@ -143,7 +143,7 @@ def valid(valid_loader, model, criterion, logger):
     # Batches
     for img, alpha_label in valid_loader:
         # Move to GPU, if available
-        img = img.to(device)
+        img = img.type(torch.FloatTensor).to(device)
         alpha_label = alpha_label.type(torch.FloatTensor).to(device)  # [320, 320, 1]
 
         # Forward prop.
