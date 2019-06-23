@@ -15,11 +15,11 @@ from utils import safe_crop
 data_transforms = {
     'train': transforms.Compose([
         transforms.ToTensor(),
-        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
+        # transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
     ]),
     'valid': transforms.Compose([
         transforms.ToTensor(),
-        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+        # transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
     ]),
 }
 
@@ -114,7 +114,7 @@ class DIMDataset(Dataset):
         with open(filename, 'r') as file:
             self.names = file.read().splitlines()
 
-        np.random.shuffle(self.names)
+        self.transformer = data_transforms[split]
 
     def __getitem__(self, i):
         x = np.empty((im_size, im_size, 3), dtype=np.float32)
@@ -141,7 +141,15 @@ class DIMDataset(Dataset):
             image = np.fliplr(image)
             alpha = np.fliplr(alpha)
 
-        x = image / 255.
+        img = image[..., ::-1]  # RGB
+        img = transforms.ToPILImage()(img)
+        img = self.transformer(img)
+
+        alpha = alpha[..., ::-1]  # RGB
+        alpha = transforms.ToPILImage()(alpha)
+        alpha = self.transformer(alpha)
+
+        x = img / 255.
         y = alpha / 255.
 
         return x, y
