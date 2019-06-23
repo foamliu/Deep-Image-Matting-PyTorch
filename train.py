@@ -6,7 +6,7 @@ from torch import nn
 from config import device, grad_clip, print_freq
 from data_gen import DIMDataset
 from models import DIMModel
-from utils import parse_args, save_checkpoint, AverageMeter, clip_gradient, get_logger, accuracy, adjust_learning_rate
+from utils import parse_args, save_checkpoint, AverageMeter, clip_gradient, get_logger, adjust_learning_rate
 
 
 def train_net(args):
@@ -43,8 +43,7 @@ def train_net(args):
     model = model.to(device)
 
     # Loss function
-    L1Loss = nn.L1Loss().to(device)
-    CrossEntropyLoss = nn.CrossEntropyLoss().to(device)
+    criterion = nn.MSELoss().to(device)
 
     # Custom dataloaders
     train_dataset = DIMDataset('train')
@@ -65,7 +64,7 @@ def train_net(args):
         # One epoch's training
         train_loss = train(train_loader=train_loader,
                            model=model,
-                           criterions=(L1Loss, CrossEntropyLoss),
+                           criterion=criterion,
                            optimizer=optimizer,
                            epoch=epoch,
                            logger=logger)
@@ -75,7 +74,7 @@ def train_net(args):
         # One epoch's validation
         valid_loss = valid(valid_loader=valid_loader,
                            model=model,
-                           criterions=(L1Loss, CrossEntropyLoss),
+                           criterion=criterion,
                            logger=logger)
 
         writer.add_scalar('Valid_Loss', valid_loss, epoch)
@@ -93,40 +92,22 @@ def train_net(args):
         save_checkpoint(epoch, epochs_since_improvement, model, optimizer, best_loss, is_best)
 
 
-def train(train_loader, model, criterions, optimizer, epoch, logger):
+def train(train_loader, model, criterion, optimizer, epoch, logger):
     model.train()  # train mode (dropout and batchnorm is used)
 
     losses = AverageMeter()
 
-    reg_losses = AverageMeter()
-    expression_accs = AverageMeter()
-    gender_accs = AverageMeter()
-    glasses_accs = AverageMeter()
-    race_accs = AverageMeter()
-
-    L1Loss, CrossEntropyLoss = criterions
-
     # Batches
-    for i, (img, reg, expression, gender, glasses, race) in enumerate(train_loader):
+    for img, alpha_label in train_loader:
         # Move to GPU, if available
         img = img.to(device)
-        reg_label = reg.type(torch.FloatTensor).to(device)  # [N, 5]
-        expression_label = expression.type(torch.LongTensor).to(device)  # [N, 3]
-        gender_label = gender.type(torch.LongTensor).to(device)  # [N, 2]
-        glasses_label = glasses.type(torch.LongTensor).to(device)  # [N, 3]
-        race_label = race.type(torch.LongTensor).to(device)  # [N, 4]
+        alpha_label = alpha_label.type(torch.FloatTensor).to(device)  # [320, 320, 1]
 
         # Forward prop.
-        reg_out, expression_out, gender_out, glasses_out, race_out = model(img)  # embedding => [N, 17]
+        alpha_out = model(img)  # [320, 320, 1]
 
         # Calculate loss
-        reg_loss = L1Loss(reg_out, reg_label)
-        expression_loss = CrossEntropyLoss(expression_out, expression_label)
-        gender_loss = CrossEntropyLoss(gender_out, gender_label)
-        glasses_loss = CrossEntropyLoss(glasses_out, glasses_label)
-        race_loss = CrossEntropyLoss(race_out, race_label)
-
-        loss = reg_loss + expression_loss + gender_loss + glasses_loss + race_loss
+        loss = criterion(alpha_out, alpha_label)
 
         # Back prop.
         optimizer.zero_grad()
@@ -141,98 +122,37 @@ def train(train_loader, model, criterions, optimizer, epoch, logger):
         # Keep track of metrics
         losses.update(loss.item())
 
-        reg_losses.update(reg_loss.item())
-        expression_accuracy = accuracy(expression_out, expression_label)
-        expression_accs.update(expression_accuracy)
-        gender_accuracy = accuracy(gender_out, gender_label)
-        gender_accs.update(gender_accuracy)
-        glasses_accuracy = accuracy(glasses_out, glasses_label)
-        glasses_accs.update(glasses_accuracy)
-        race_accuracy = accuracy(race_out, race_label)
-        race_accs.update(race_accuracy)
-
         # Print status
 
         if i % print_freq == 0:
-            status = 'Epoch: [{0}][{1}/{2}]\t' \
-                     'Loss {loss.val:.4f} ({loss.avg:.4f})\t' \
-                     'Reg Loss {reg_loss.val:.4f} ({reg_loss.avg:.4f})\t' \
-                     'Expression Accuracy {expression_acc.val:.4f} ({expression_acc.avg:.4f})\t' \
-                     'Gender Accuracy {gender_acc.val:.4f} ({gender_acc.avg:.4f})\t' \
-                     'Glasses Accuracy {expression_acc.val:.4f} ({expression_acc.avg:.4f})\t' \
-                     'Race Accuracy {expression_acc.val:.4f} ({expression_acc.avg:.4f})\t'.format(epoch, i,
-                                                                                                  len(train_loader),
-                                                                                                  loss=losses,
-                                                                                                  reg_loss=reg_losses,
-                                                                                                  expression_acc=expression_accs,
-                                                                                                  gender_acc=gender_accs,
-                                                                                                  glasses_acc=glasses_accs,
-                                                                                                  race_acc=race_accs)
+            status = 'Epoch: [{0}][{1}/{2}]'.format(epoch, i, len(train_loader), loss=losses)
             logger.info(status)
 
     return losses.avg
 
 
-def valid(valid_loader, model, criterions, logger):
+def valid(valid_loader, model, criterion, logger):
     model.eval()  # eval mode (dropout and batchnorm is NOT used)
 
     losses = AverageMeter()
 
-    reg_losses = AverageMeter()
-    expression_accs = AverageMeter()
-    gender_accs = AverageMeter()
-    glasses_accs = AverageMeter()
-    race_accs = AverageMeter()
-
-    L1Loss, CrossEntropyLoss = criterions
-
     # Batches
-    for i, (img, reg, expression, gender, glasses, race) in enumerate(valid_loader):
+    for img, alpha_label in valid_loader:
         # Move to GPU, if available
         img = img.to(device)
-        reg_label = reg.type(torch.FloatTensor).to(device)  # [N, 5]
-        expression_label = expression.type(torch.LongTensor).to(device)  # [N, 3]
-        gender_label = gender.type(torch.LongTensor).to(device)  # [N, 2]
-        glasses_label = glasses.type(torch.LongTensor).to(device)  # [N, 3]
-        race_label = race.type(torch.LongTensor).to(device)  # [N, 4]
+        alpha_label = alpha_label.type(torch.FloatTensor).to(device)  # [320, 320, 1]
 
         # Forward prop.
-        reg_out, expression_out, gender_out, glasses_out, race_out = model(img)
+        alpha_out = model(img)
 
         # Calculate loss
-        reg_loss = L1Loss(reg_out, reg_label)
-        expression_loss = CrossEntropyLoss(expression_out, expression_label)
-        gender_loss = CrossEntropyLoss(gender_out, gender_label)
-        glasses_loss = CrossEntropyLoss(glasses_out, glasses_label)
-        race_loss = CrossEntropyLoss(race_out, race_label)
-
-        loss = reg_loss + expression_loss + gender_loss + glasses_loss + race_loss
+        loss = criterion(alpha_out, alpha_label)
 
         # Keep track of metrics
         losses.update(loss.item())
 
-        reg_losses.update(reg_loss.item())
-        expression_accuracy = accuracy(expression_out, expression_label)
-        expression_accs.update(expression_accuracy)
-        gender_accuracy = accuracy(gender_out, gender_label)
-        gender_accs.update(gender_accuracy)
-        glasses_accuracy = accuracy(glasses_out, glasses_label)
-        glasses_accs.update(glasses_accuracy)
-        race_accuracy = accuracy(race_out, race_label)
-        race_accs.update(race_accuracy)
-
     # Print status
-    status = 'Validation: Loss {loss.avg:.4f}\t' \
-             'Reg Loss {reg_loss.val:.4f} ({reg_loss.avg:.4f})\t' \
-             'Expression Accuracy {expression_acc.val:.4f} ({expression_acc.avg:.4f})\t' \
-             'Gender Accuracy {gender_acc.val:.4f} ({gender_acc.avg:.4f})\t' \
-             'Glasses Accuracy {expression_acc.val:.4f} ({expression_acc.avg:.4f})\t' \
-             'Race Accuracy {expression_acc.val:.4f} ({expression_acc.avg:.4f})\n'.format(loss=losses,
-                                                                                          reg_loss=reg_losses,
-                                                                                          expression_acc=expression_accs,
-                                                                                          gender_acc=gender_accs,
-                                                                                          glasses_acc=glasses_accs,
-                                                                                          race_acc=race_accs)
+    status = 'Validation: Loss {loss.avg:.4f}\n'.format(loss=losses)
 
     logger.info(status)
 

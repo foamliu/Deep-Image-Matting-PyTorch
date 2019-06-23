@@ -111,14 +111,14 @@ class DIMDataset(Dataset):
         self.split = split
 
         filename = '{}_names.txt'.format(split)
-        with open(filename, 'r') as f:
-            self.names = f.read().splitlines()
+        with open(filename, 'r') as file:
+            self.names = file.read().splitlines()
 
         np.random.shuffle(self.names)
 
     def __getitem__(self, i):
-        x = np.empty((im_size, im_size, 4), dtype=np.float32)
-        y = np.empty((im_size, im_size, 2), dtype=np.float32)
+        x = np.empty((im_size, im_size, 3), dtype=np.float32)
+        y = np.empty((im_size, im_size, 1), dtype=np.float32)
 
         name = self.names[i]
         fcount = int(name.split('.')[0].split('_')[0])
@@ -136,27 +136,18 @@ class DIMDataset(Dataset):
         image = safe_crop(image, x, y, crop_size)
         alpha = safe_crop(alpha, x, y, crop_size)
 
-        trimap = generate_trimap(alpha)
-
         # Flip array left to right randomly (prob=1:1)
         if np.random.random_sample() > 0.5:
             image = np.fliplr(image)
-            trimap = np.fliplr(trimap)
             alpha = np.fliplr(alpha)
 
-        x[:, :, 0:3] = image / 255.
-        x[:, :, 3] = trimap / 255.
-
-        mask = np.equal(trimap, 128).astype(np.float32)
-        y[:, :, 0] = alpha / 255.
-        y[:, :, 1] = mask
-
-        i += 1
+        x = image / 255.
+        y = alpha / 255.
 
         return x, y
 
     def __len__(self):
-        return len(self.samples)
+        return len(self.names)
 
 
 if __name__ == "__main__":
