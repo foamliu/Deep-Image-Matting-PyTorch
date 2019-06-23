@@ -7,6 +7,7 @@ from config import device, grad_clip, print_freq
 from data_gen import DIMDataset
 from models import DIMModel
 from utils import parse_args, save_checkpoint, AverageMeter, clip_gradient, get_logger, adjust_learning_rate
+from pre_process import do_composite
 
 
 def train_net(args):
@@ -90,6 +91,9 @@ def train_net(args):
 
         # Save checkpoint
         save_checkpoint(epoch, epochs_since_improvement, model, optimizer, best_loss, is_best)
+
+        # composite training data
+        do_composite()
 
 
 def train(train_loader, model, criterion, optimizer, epoch, logger):
