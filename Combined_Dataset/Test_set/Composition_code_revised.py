@@ -1,5 +1,6 @@
 import math
 import time
+
 import cv2 as cv
 import numpy as np
 from tqdm import tqdm
@@ -50,6 +51,8 @@ def process(im_name, bg_name, fcount, bcount):
 
 
 def do_composite_test():
+    print('Doing composite training data...')
+
     num_bgs = 20
 
     with open('data/Combined_Dataset/Test_set/test_bg_names.txt') as f:
@@ -59,8 +62,8 @@ def do_composite_test():
 
     # a_files = os.listdir(a_path)
     num_samples = len(fg_files) * num_bgs
+    print('num_samples: ' + str(num_samples))
 
-    # pb = ProgressBar(total=100, prefix='Compose test images', suffix='', decimals=3, length=50, fill='=')
     start = time.time()
     bcount = 0
     for fcount in tqdm(range(len(fg_files))):
@@ -70,8 +73,6 @@ def do_composite_test():
             bg_name = bg_files[bcount]
             process(im_name, bg_name, fcount, bcount)
             bcount += 1
-
-            # pb.print_progress_bar(bcount * 100.0 / num_samples)
 
     end = time.time()
     elapsed = end - start
