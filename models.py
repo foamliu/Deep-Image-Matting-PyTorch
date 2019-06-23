@@ -102,7 +102,7 @@ class segnetUp3(nn.Module):
 
 class DIMModel(nn.Module):
     def __init__(self, n_classes=3, in_channels=3, is_unpooling=True):
-        super(SegNet, self).__init__()
+        super(DIMModel, self).__init__()
 
         self.in_channels = in_channels
         self.is_unpooling = is_unpooling
