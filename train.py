@@ -20,7 +20,7 @@ def train_net(args):
 
     # Initialize / load checkpoint
     if checkpoint is None:
-        model = FaceAttributeModel()
+        model = DIMModel()
         model = nn.DataParallel(model)
 
         if args.optimizer == 'sgd':
@@ -47,9 +47,9 @@ def train_net(args):
     CrossEntropyLoss = nn.CrossEntropyLoss().to(device)
 
     # Custom dataloaders
-    train_dataset = FaceAttributesDataset('train')
+    train_dataset = DIMDataset('train')
     train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True, num_workers=4)
-    valid_dataset = FaceAttributesDataset('valid')
+    valid_dataset = DIMDataset('valid')
     valid_loader = torch.utils.data.DataLoader(valid_dataset, batch_size=args.batch_size, shuffle=False, num_workers=4)
 
     # scheduler = StepLR(optimizer, step_size=args.lr_step, gamma=0.1)
@@ -120,7 +120,7 @@ def train(train_loader, model, criterions, optimizer, epoch, logger):
         reg_out, expression_out, gender_out, glasses_out, race_out = model(img)  # embedding => [N, 17]
 
         # Calculate loss
-        reg_loss = L1Loss(reg_out, reg_label) * loss_ratio
+        reg_loss = L1Loss(reg_out, reg_label)
         expression_loss = CrossEntropyLoss(expression_out, expression_label)
         gender_loss = CrossEntropyLoss(gender_out, gender_label)
         glasses_loss = CrossEntropyLoss(glasses_out, glasses_label)
@@ -200,7 +200,7 @@ def valid(valid_loader, model, criterions, logger):
         reg_out, expression_out, gender_out, glasses_out, race_out = model(img)
 
         # Calculate loss
-        reg_loss = L1Loss(reg_out, reg_label) * loss_ratio
+        reg_loss = L1Loss(reg_out, reg_label)
         expression_loss = CrossEntropyLoss(expression_out, expression_label)
         gender_loss = CrossEntropyLoss(gender_out, gender_label)
         glasses_loss = CrossEntropyLoss(glasses_out, glasses_label)
