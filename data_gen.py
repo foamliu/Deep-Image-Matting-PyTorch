@@ -139,12 +139,12 @@ class DIMDataset(Dataset):
             alpha = np.fliplr(alpha)
 
         img = image[..., ::-1]  # RGB
-        print('img.shape: ' + str(img.shape))
+        img = np.uint(img)
         img = transforms.ToPILImage()(img)
         img = self.transformer(img)
 
         alpha = alpha[..., ::-1]  # RGB
-        print('alpha.shape: ' + str(alpha.shape))
+        alpha = np.uint(alpha)
         alpha = transforms.ToPILImage()(alpha)
         alpha = self.transformer(alpha)
 
