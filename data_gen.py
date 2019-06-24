@@ -144,7 +144,7 @@ class DIMDataset(Dataset):
 
         alpha = alpha[..., ::-1]  # RGB
         alpha = alpha / 255.
-        alpha = np.transpose(alpha, (2, 0, 1))
+        # alpha = np.transpose(alpha, (2, 0, 1))
 
         return img, alpha
 
