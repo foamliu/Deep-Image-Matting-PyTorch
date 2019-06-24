@@ -121,20 +121,19 @@ class DIMModel(nn.Module):
 
     def forward(self, inputs):
 
-        # down1, indices_1, unpool_shape1 = self.down1(inputs)
-        # down2, indices_2, unpool_shape2 = self.down2(down1)
-        # down3, indices_3, unpool_shape3 = self.down3(down2)
-        # down4, indices_4, unpool_shape4 = self.down4(down3)
-        # down5, indices_5, unpool_shape5 = self.down5(down4)
-        #
-        # up5 = self.up5(down5, indices_5, unpool_shape5)
-        # up4 = self.up4(up5, indices_4, unpool_shape4)
-        # up3 = self.up3(up4, indices_3, unpool_shape3)
-        # up2 = self.up2(up3, indices_2, unpool_shape2)
-        # up1 = self.up1(up2, indices_1, unpool_shape1)
-        #
-        # return up1
-        return inputs
+        down1, indices_1, unpool_shape1 = self.down1(inputs)
+        down2, indices_2, unpool_shape2 = self.down2(down1)
+        down3, indices_3, unpool_shape3 = self.down3(down2)
+        down4, indices_4, unpool_shape4 = self.down4(down3)
+        down5, indices_5, unpool_shape5 = self.down5(down4)
+
+        up5 = self.up5(down5, indices_5, unpool_shape5)
+        up4 = self.up4(up5, indices_4, unpool_shape4)
+        up3 = self.up3(up4, indices_3, unpool_shape3)
+        up2 = self.up2(up3, indices_2, unpool_shape2)
+        up1 = self.up1(up2, indices_1, unpool_shape1)
+
+        return up1
 
     def init_vgg16_params(self, vgg16):
         blocks = [self.down1, self.down2, self.down3, self.down4, self.down5]
@@ -175,4 +174,4 @@ class DIMModel(nn.Module):
 if __name__ == '__main__':
     model = DIMModel().to(device)
 
-    summary(model, (3, im_size, im_size))
+    summary(model, input_size=(3, im_size, im_size))
