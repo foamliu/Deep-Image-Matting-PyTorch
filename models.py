@@ -1,3 +1,4 @@
+import torch
 import torch.nn as nn
 from torchsummary import summary
 
@@ -120,7 +121,7 @@ class DIMModel(nn.Module):
         self.up1 = segnetUp2(64, n_classes)
 
     def forward(self, inputs):
-
+        # inputs: [N, 3, 320, 320]
         down1, indices_1, unpool_shape1 = self.down1(inputs)
         down2, indices_2, unpool_shape2 = self.down2(down1)
         down3, indices_3, unpool_shape3 = self.down3(down2)
@@ -132,8 +133,10 @@ class DIMModel(nn.Module):
         up3 = self.up3(up4, indices_3, unpool_shape3)
         up2 = self.up2(up3, indices_2, unpool_shape2)
         up1 = self.up1(up2, indices_1, unpool_shape1)
-
-        return up1
+        # up1: [N, 3, 320, 320]
+        outputs = torch.mean(up1, dim=1)  # [N, 320, 320]
+        # outputs: [N, 320, 320]
+        return outputs
 
     def init_vgg16_params(self, vgg16):
         blocks = [self.down1, self.down2, self.down3, self.down4, self.down5]
