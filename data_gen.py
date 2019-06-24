@@ -139,10 +139,12 @@ class DIMDataset(Dataset):
             alpha = np.fliplr(alpha)
 
         img = image[..., ::-1]  # RGB
-        alpha = alpha[..., ::-1]  # RGB
-
         img = img / 255.
+        img = np.transpose(img, (2, 0, 1))
+
+        alpha = alpha[..., ::-1]  # RGB
         alpha = alpha / 255.
+        alpha = np.transpose(alpha, (2, 0, 1))
 
         return img, alpha
 
