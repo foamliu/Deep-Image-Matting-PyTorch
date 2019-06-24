@@ -109,6 +109,9 @@ def train(train_loader, model, criterion, optimizer, epoch, logger):
         # Forward prop.
         alpha_out = model(img)  # [320, 320, 1]
 
+        print('alpha_out.size(): ' + str(alpha_out.size()))
+        print('alpha_label.size(): ' + str(alpha_label.size()))
+
         # Calculate loss
         loss = criterion(alpha_out, alpha_label)
 
