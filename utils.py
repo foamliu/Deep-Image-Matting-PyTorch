@@ -89,6 +89,11 @@ def adjust_learning_rate(optimizer, shrink_factor):
     print("The new learning rate is %f\n" % (optimizer.param_groups[0]['lr'],))
 
 
+def get_learning_rate(optimizer):
+    for param_group in optimizer.param_groups:
+        return param_group['lr']
+
+
 def accuracy(scores, targets, k=1):
     batch_size = targets.size(0)
     _, ind = scores.topk(k, 1, True, True)
@@ -101,7 +106,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description='Train face network')
     # general
     parser.add_argument('--end-epoch', type=int, default=50, help='training epoch size.')
-    parser.add_argument('--lr', type=float, default=0.001, help='start learning rate')
+    parser.add_argument('--lr', type=float, default=0.01, help='start learning rate')
     parser.add_argument('--lr-step', type=int, default=10, help='period of learning rate decay')
     parser.add_argument('--optimizer', default='sgd', help='optimizer')
     parser.add_argument('--weight-decay', type=float, default=0.0005, help='weight decay')

@@ -7,7 +7,8 @@ from config import device, im_size, grad_clip, print_freq
 from data_gen import DIMDataset
 from models import DIMModel
 from pre_process import do_composite
-from utils import parse_args, save_checkpoint, AverageMeter, clip_gradient, get_logger, adjust_learning_rate
+from utils import parse_args, save_checkpoint, AverageMeter, clip_gradient, get_logger, adjust_learning_rate, \
+    get_learning_rate
 
 
 def train_net(args):
@@ -68,6 +69,8 @@ def train_net(args):
                            optimizer=optimizer,
                            epoch=epoch,
                            logger=logger)
+        effective_lr = get_learning_rate(optimizer)
+        print('Current effective learning rate: {}\n'.format(effective_lr))
 
         writer.add_scalar('Train_Loss', train_loss, epoch)
 
@@ -150,7 +153,7 @@ def valid(valid_loader, model, criterion, logger):
         alpha_label = alpha_label.reshape((-1, im_size * im_size))  # [N, 320*320]
 
         # Forward prop.
-        alpha_out = model(img)    # [N, 320, 320]
+        alpha_out = model(img)  # [N, 320, 320]
         alpha_out = alpha_out.reshape((-1, im_size * im_size))  # [N, 320*320]
 
         # Calculate loss
