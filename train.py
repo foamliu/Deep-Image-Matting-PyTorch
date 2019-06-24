@@ -3,7 +3,7 @@ import torch
 from tensorboardX import SummaryWriter
 from torch import nn
 
-from config import device, grad_clip, print_freq
+from config import device, im_size, grad_clip, print_freq
 from data_gen import DIMDataset
 from models import DIMModel
 from pre_process import do_composite
@@ -103,15 +103,14 @@ def train(train_loader, model, criterion, optimizer, epoch, logger):
     # Batches
     for i, (img, alpha_label) in enumerate(train_loader):
         # Move to GPU, if available
-        img = img.type(torch.FloatTensor).to(device)  # [320, 320, 3]
-        alpha_label = alpha_label.type(torch.FloatTensor).to(device)  # [320, 320, 1]
+        img = img.type(torch.FloatTensor).to(device)  # [N, 320, 320, 3]
+        alpha_label = alpha_label.type(torch.FloatTensor).to(device)  # [N, 320, 320]
+        alpha_label = alpha_label.reshape((-1, im_size * im_size))
 
         # Forward prop.
         alpha_out = model(img)  # [N, 3, 320, 320]
-        alpha_out = torch.mean(alpha_out, dim=1)
-
-        print('alpha_out.size(): ' + str(alpha_out.size()))
-        print('alpha_label.size(): ' + str(alpha_label.size()))
+        alpha_out = torch.mean(alpha_out, dim=1)  # [N, 320, 320]
+        alpha_out = alpha_out.reshape((-1, im_size * im_size))
 
         # Calculate loss
         loss = criterion(alpha_out, alpha_label)
