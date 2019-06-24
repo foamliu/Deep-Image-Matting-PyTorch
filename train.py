@@ -101,7 +101,7 @@ def train(train_loader, model, criterion, optimizer, epoch, logger):
     losses = AverageMeter()
 
     # Batches
-    for img, alpha_label in train_loader:
+    for i, (img, alpha_label) in enumerate(train_loader):
         # Move to GPU, if available
         img = img.type(torch.FloatTensor).to(device)  # [320, 320, 3]
         alpha_label = alpha_label.type(torch.FloatTensor).to(device)  # [320, 320, 1]
