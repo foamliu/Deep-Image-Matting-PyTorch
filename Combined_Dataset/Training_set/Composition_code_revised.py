@@ -1,8 +1,10 @@
 import math
 import time
+from multiprocessing import Pool
 
 import cv2 as cv
 import numpy as np
+import tqdm
 from tqdm import tqdm
 
 ##############################################################
@@ -19,6 +21,13 @@ bg_path = 'data/bg/'
 
 # Path to folder where you want the composited images to go
 out_path = 'data/merged/'
+
+num_bgs = 100
+
+with open('data/Combined_Dataset/Training_set/training_bg_names.txt') as f:
+    bg_files = f.read().splitlines()
+with open('data/Combined_Dataset/Training_set/training_fg_names.txt') as f:
+    fg_files = f.read().splitlines()
 
 
 ##############################################################
@@ -50,29 +59,37 @@ def process(im_name, bg_name, fcount, bcount):
     cv.imwrite(filename, out)
 
 
+def process_one_fg(fcount):
+    im_name = fg_files[fcount]
+    bcount = fcount * num_bgs
+
+    for i in range(num_bgs):
+        bg_name = bg_files[bcount]
+        process(im_name, bg_name, fcount, bcount)
+        bcount += 1
+
+
 def do_composite():
     print('Doing composite training data...')
 
-    num_bgs = 100
-
-    with open('data/Combined_Dataset/Training_set/training_bg_names.txt') as f:
-        bg_files = f.read().splitlines()
-    with open('data/Combined_Dataset/Training_set/training_fg_names.txt') as f:
-        fg_files = f.read().splitlines()
-
-    # a_files = os.listdir(a_path)
     num_samples = len(fg_files) * num_bgs
     print('num_samples: ' + str(num_samples))
 
     start = time.time()
-    bcount = 0
-    for fcount in tqdm(range(len(fg_files))):
-        im_name = fg_files[fcount]
+    # bcount = 0
+    # for fcount in tqdm(range(len(fg_files))):
+    #     im_name = fg_files[fcount]
+    #
+    #     for i in range(num_bgs):
+    #         bg_name = bg_files[bcount]
+    #         process(im_name, bg_name, fcount, bcount)
+    #         bcount += 1
 
-        for i in range(num_bgs):
-            bg_name = bg_files[bcount]
-            process(im_name, bg_name, fcount, bcount)
-            bcount += 1
+    with Pool(processes=16) as p:
+        max_ = len(fg_files)
+        with tqdm(total=max_) as pbar:
+            for i, _ in tqdm(enumerate(p.imap_unordered(process_one_fg, range(0, max_)))):
+                pbar.update()
 
     end = time.time()
     elapsed = end - start
