@@ -133,20 +133,25 @@ class DIMDataset(Dataset):
         image = safe_crop(image, x, y, crop_size)
         alpha = safe_crop(alpha, x, y, crop_size)
 
+        trimap = generate_trimap(alpha)
+
         # Flip array left to right randomly (prob=1:1)
         if np.random.random_sample() > 0.5:
             image = np.fliplr(image)
+            trimap = np.fliplr(trimap)
             alpha = np.fliplr(alpha)
 
+        x = np.empty((4, im_size, im_size), dtype=np.float32)
         img = image[..., ::-1]  # RGB
-        img = img / 255.
         img = np.transpose(img, (2, 0, 1))
+        x[0:3, :, :] = img / 255.
+        x[3, :, :] = trimap / 255.
 
+        y = np.empty((im_size, im_size), dtype=np.float32)
         alpha = alpha[..., ::-1]  # RGB
-        alpha = alpha / 255.
-        # alpha = np.transpose(alpha, (2, 0, 1))
+        y[:, :] = alpha / 255.
 
-        return img, alpha
+        return x, y
 
     def __len__(self):
         return len(self.names)

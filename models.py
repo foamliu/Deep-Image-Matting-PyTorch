@@ -102,7 +102,7 @@ class segnetUp3(nn.Module):
 
 
 class DIMModel(nn.Module):
-    def __init__(self, n_classes=3, in_channels=3, is_unpooling=True):
+    def __init__(self, n_classes=1, in_channels=4, is_unpooling=True):
         super(DIMModel, self).__init__()
 
         self.in_channels = in_channels
@@ -133,7 +133,7 @@ class DIMModel(nn.Module):
         up3 = self.up3(up4, indices_3, unpool_shape3)
         up2 = self.up2(up3, indices_2, unpool_shape2)
         up1 = self.up1(up2, indices_1, unpool_shape1)
-        # up1: [N, 3, 320, 320]
+        # up1: [N, 1, 320, 320]
         outputs = torch.mean(up1, dim=1)  # [N, 320, 320]
         # outputs: [N, 320, 320]
         return outputs
