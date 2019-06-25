@@ -59,6 +59,16 @@ def process(im_name, bg_name, fcount, bcount):
     cv.imwrite(filename, out)
 
 
+def process_one_fg(fcount):
+    im_name = fg_files[fcount]
+    bcount = fcount * num_bgs
+
+    for i in range(num_bgs):
+        bg_name = bg_files[bcount]
+        process(im_name, bg_name, fcount, bcount)
+        bcount += 1
+
+
 def do_composite_test():
     print('Doing composite training data...')
 
@@ -78,6 +88,7 @@ def do_composite_test():
 
     with Pool(processes=16) as p:
         max_ = len(fg_files)
+        print('num_fg_files: ' + str(max_))
         with tqdm(total=max_) as pbar:
             for i, _ in tqdm(enumerate(p.imap_unordered(process_one_fg, range(0, max_)))):
                 pbar.update()

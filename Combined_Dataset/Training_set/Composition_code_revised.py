@@ -87,6 +87,7 @@ def do_composite():
 
     with Pool(processes=16) as p:
         max_ = len(fg_files)
+        print('num_fg_files: ' + str(max_))
         with tqdm(total=max_) as pbar:
             for i, _ in tqdm(enumerate(p.imap_unordered(process_one_fg, range(0, max_)))):
                 pbar.update()
