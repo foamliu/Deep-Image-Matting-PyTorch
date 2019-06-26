@@ -22,7 +22,7 @@ def train_net(args):
 
     # Initialize / load checkpoint
     if checkpoint is None:
-        model = DIMModel()
+        model = DIMModel(n_classes=1, in_channels=4, is_unpooling=True, pretrain=True)
         model = nn.DataParallel(model)
 
         if args.optimizer == 'sgd':

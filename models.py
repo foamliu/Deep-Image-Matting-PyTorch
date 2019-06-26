@@ -102,11 +102,12 @@ class segnetUp3(nn.Module):
 
 
 class DIMModel(nn.Module):
-    def __init__(self, n_classes=1, in_channels=4, is_unpooling=True):
+    def __init__(self, n_classes=1, in_channels=4, is_unpooling=True, pretrain=True):
         super(DIMModel, self).__init__()
 
         self.in_channels = in_channels
         self.is_unpooling = is_unpooling
+        self.pretrain = pretrain
 
         self.down1 = segnetDown2(self.in_channels, 64)
         self.down2 = segnetDown2(64, 128)
@@ -119,6 +120,11 @@ class DIMModel(nn.Module):
         self.up3 = segnetUp3(256, 128)
         self.up2 = segnetUp2(128, 64)
         self.up1 = segnetUp2(64, n_classes)
+
+        if self.pretrain:
+            import torchvision.models as models
+            vgg16 = models.vgg16()
+            self.init_vgg16_params(vgg16)
 
     def forward(self, inputs):
         # inputs: [N, 3, 320, 320]
