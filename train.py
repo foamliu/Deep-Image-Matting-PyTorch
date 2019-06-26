@@ -7,8 +7,8 @@ from config import device, im_size, grad_clip, print_freq
 from data_gen import DIMDataset
 from models import DIMModel
 from pre_process import do_composite
-from utils import parse_args, save_checkpoint, AverageMeter, clip_gradient, get_logger, adjust_learning_rate, \
-    get_learning_rate, alpha_prediction_loss
+from utils import parse_args, save_checkpoint, AverageMeter, clip_gradient, get_logger, get_learning_rate, \
+    alpha_prediction_loss
 
 
 def train_net(args):
