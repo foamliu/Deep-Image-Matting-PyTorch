@@ -174,10 +174,9 @@ class DIMModel(nn.Module):
 
         for l1, l2 in zip(vgg_layers, merged_layers):
             if isinstance(l1, nn.Conv2d) and isinstance(l2, nn.Conv2d):
-                assert l1.weight.size() == l2.weight.size()
-                assert l1.bias.size() == l2.bias.size()
-                l2.weight.data = l1.weight.data
-                l2.bias.data = l1.bias.data
+                if l1.weight.size() == l2.weight.size() and l1.bias.size() == l2.bias.size():
+                    l2.weight.data = l1.weight.data
+                    l2.bias.data = l1.bias.data
 
 
 if __name__ == '__main__':
