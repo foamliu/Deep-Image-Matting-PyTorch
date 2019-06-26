@@ -147,9 +147,11 @@ class DIMDataset(Dataset):
         x[0:3, :, :] = img / 255.
         x[3, :, :] = trimap / 255.
 
-        y = np.empty((im_size, im_size), dtype=np.float32)
+        y = np.empty((2, im_size, im_size), dtype=np.float32)
         alpha = alpha[..., ::-1]  # RGB
-        y[:, :] = alpha / 255.
+        y[0, :, :] = alpha / 255.
+        mask = np.equal(trimap, 128).astype(np.float32)
+        y[1, :, :] = mask
 
         return x, y
 

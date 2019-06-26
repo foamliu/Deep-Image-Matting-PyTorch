@@ -8,7 +8,7 @@ from data_gen import DIMDataset
 from models import DIMModel
 from pre_process import do_composite
 from utils import parse_args, save_checkpoint, AverageMeter, clip_gradient, get_logger, adjust_learning_rate, \
-    get_learning_rate
+    get_learning_rate, alpha_prediction_loss
 
 
 def train_net(args):
@@ -115,7 +115,8 @@ def train(train_loader, model, criterion, optimizer, epoch, logger):
         alpha_out = alpha_out.reshape((-1, im_size * im_size))  # [N, 320*320]
 
         # Calculate loss
-        loss = criterion(alpha_out, alpha_label)
+        # loss = criterion(alpha_out, alpha_label)
+        loss = alpha_prediction_loss(alpha_out, alpha_label)
 
         # Back prop.
         optimizer.zero_grad()
@@ -157,7 +158,8 @@ def valid(valid_loader, model, criterion, logger):
         alpha_out = alpha_out.reshape((-1, im_size * im_size))  # [N, 320*320]
 
         # Calculate loss
-        loss = criterion(alpha_out, alpha_label)
+        # loss = criterion(alpha_out, alpha_label)
+        loss = alpha_prediction_loss(alpha_out, alpha_label)
 
         # Keep track of metrics
         losses.update(loss.item())

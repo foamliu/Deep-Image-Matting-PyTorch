@@ -4,6 +4,9 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')  # sets de
 
 im_size = 320
 unknown_code = 128
+epsilon = 1e-6
+epsilon_sqr = epsilon ** 2
+
 num_samples = 43100
 num_train = 34480
 # num_samples - num_train_samples

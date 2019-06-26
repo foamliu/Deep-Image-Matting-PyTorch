@@ -5,7 +5,7 @@ import cv2 as cv
 import numpy as np
 import torch
 
-from config import im_size
+from config import im_size, epsilon, epsilon_sqr
 
 
 def clip_gradient(optimizer, grad_clip):
@@ -140,3 +140,14 @@ def safe_crop(mat, x, y, crop_size=(im_size, im_size)):
     if crop_size != (im_size, im_size):
         ret = cv.resize(ret, dsize=(im_size, im_size), interpolation=cv.INTER_NEAREST)
     return ret
+
+
+# alpha prediction loss: the abosolute difference between the ground truth alpha values and the
+# predicted alpha values at each pixel. However, due to the non-differentiable property of
+# absolute values, we use the following loss function to approximate it.
+def alpha_prediction_loss(y_pred, y_true):
+    mask = y_true[:, 1, :, :]
+    diff = y_pred[:, 0, :, :] - y_true[:, 0, :, :]
+    diff = diff * mask
+    num_pixels = torch.sum(mask)
+    return torch.sum(torch.sqrt(torch.square(diff) + epsilon_sqr)) / (num_pixels + epsilon)
