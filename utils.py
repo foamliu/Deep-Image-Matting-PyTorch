@@ -146,8 +146,8 @@ def safe_crop(mat, x, y, crop_size=(im_size, im_size)):
 # predicted alpha values at each pixel. However, due to the non-differentiable property of
 # absolute values, we use the following loss function to approximate it.
 def alpha_prediction_loss(y_pred, y_true):
-    mask = y_true[:, 1, :, :]
-    diff = y_pred[:, 0, :, :] - y_true[:, 0, :, :]
+    mask = y_true[:, 1, :]
+    diff = y_pred[:, 0, :] - y_true[:, 0, :]
     diff = diff * mask
     num_pixels = torch.sum(mask)
     return torch.sum(torch.sqrt(torch.square(diff) + epsilon_sqr)) / (num_pixels + epsilon)
