@@ -8,7 +8,7 @@ from data_gen import DIMDataset
 from models import DIMModel
 from pre_process import do_composite
 from utils import parse_args, save_checkpoint, AverageMeter, clip_gradient, get_logger, get_learning_rate, \
-    alpha_prediction_loss
+    alpha_prediction_loss, adjust_learning_rate
 
 
 def train_net(args):
@@ -54,6 +54,12 @@ def train_net(args):
 
     # Epochs
     for epoch in range(start_epoch, args.end_epoch):
+        if epochs_since_improvement == 10:
+            break
+
+        if epochs_since_improvement > 0 and epochs_since_improvement % 2 == 0:
+            adjust_learning_rate(optimizer, 0.8)
+
         # One epoch's training
         train_loss = train(train_loader=train_loader,
                            model=model,
