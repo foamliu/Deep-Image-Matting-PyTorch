@@ -150,4 +150,4 @@ def alpha_prediction_loss(y_pred, y_true):
     diff = y_pred[:, 0, :] - y_true[:, 0, :]
     diff = diff * mask
     num_pixels = torch.sum(mask)
-    return torch.sum(torch.sqrt(torch.square(diff) + epsilon_sqr)) / (num_pixels + epsilon)
+    return torch.sum(torch.sqrt(torch.pow(diff, 2) + epsilon_sqr)) / (num_pixels + epsilon)
