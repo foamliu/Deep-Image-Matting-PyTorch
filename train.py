@@ -52,16 +52,8 @@ def train_net(args):
     valid_dataset = DIMDataset('valid')
     valid_loader = torch.utils.data.DataLoader(valid_dataset, batch_size=args.batch_size, shuffle=False, num_workers=8)
 
-    # scheduler = StepLR(optimizer, step_size=args.lr_step, gamma=0.1)
-
     # Epochs
     for epoch in range(start_epoch, args.end_epoch):
-        # Decay learning rate if there is no improvement for 8 consecutive epochs, and terminate training after 10
-        if epochs_since_improvement == 10:
-            break
-        if epochs_since_improvement > 0 and epochs_since_improvement % 2 == 0:
-            adjust_learning_rate(optimizer, 0.6)
-
         # One epoch's training
         train_loss = train(train_loader=train_loader,
                            model=model,
