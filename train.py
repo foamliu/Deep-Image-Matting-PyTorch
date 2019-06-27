@@ -104,7 +104,7 @@ def train(train_loader, model, criterion, optimizer, epoch, logger):
     # Batches
     for i, (img, alpha_label) in enumerate(train_loader):
         # Move to GPU, if available
-        img = img.type(torch.FloatTensor).to(device)  # [N, 320, 320, 3]
+        img = img.type(torch.FloatTensor).to(device)  # [N, 3, 320, 320]
         alpha_label = alpha_label.type(torch.FloatTensor).to(device)  # [N, 320, 320]
         alpha_label = alpha_label.reshape((-1, 2, im_size * im_size))  # [N, 320*320]
 
@@ -147,7 +147,7 @@ def valid(valid_loader, model, criterion, logger):
     # Batches
     for img, alpha_label in valid_loader:
         # Move to GPU, if available
-        img = img.type(torch.FloatTensor).to(device)  # [N, 320, 320, 3]
+        img = img.type(torch.FloatTensor).to(device)  # [N, 3, 320, 320]
         alpha_label = alpha_label.type(torch.FloatTensor).to(device)  # [N, 320, 320]
         alpha_label = alpha_label.reshape((-1, 2, im_size * im_size))  # [N, 320*320]
 
