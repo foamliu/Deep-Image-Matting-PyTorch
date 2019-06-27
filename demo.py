@@ -83,8 +83,8 @@ if __name__ == '__main__':
         img = np.transpose(img, (2, 0, 1))
 
         x_test = np.empty((1, 4, im_size, im_size), dtype=np.float32)
-        x_test[0, :, :, 0:3] = img / 255.
-        x_test[0, :, :, 3] = trimap / 255.
+        x_test[0, 0:3, :, :] = img / 255.
+        x_test[0, 3, :, :] = trimap / 255.
 
         with torch.no_grad():
             y_pred = model(x_test)
