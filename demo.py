@@ -7,10 +7,8 @@ import numpy as np
 import torch
 
 from config import device, im_size
-from data_gen import data_transforms
-from data_gen import generate_trimap, random_choice, get_alpha_test
-from utils import compute_mse_loss, compute_sad_loss
-from utils import get_final_output, safe_crop, draw_str
+from data_gen import data_transforms, generate_trimap, random_choice, get_alpha_test
+from utils import compute_mse_loss, compute_sad_loss, ensure_folder, get_final_output, safe_crop, draw_str
 
 
 def composite4(fg, bg, a, w, h):
@@ -38,6 +36,8 @@ if __name__ == '__main__':
     model.eval()
 
     transformer = data_transforms['valid']
+
+    ensure_folder('images')
 
     out_test_path = 'data/merged_test/'
     test_images = [f for f in os.listdir(out_test_path) if
