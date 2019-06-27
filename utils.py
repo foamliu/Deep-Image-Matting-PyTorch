@@ -5,7 +5,7 @@ import cv2 as cv
 import numpy as np
 import torch
 
-from config import im_size, epsilon, epsilon_sqr
+from config import im_size, epsilon, epsilon_sqr, unknown_code
 
 
 def clip_gradient(optimizer, grad_clip):
@@ -151,3 +151,41 @@ def alpha_prediction_loss(y_pred, y_true):
     diff = diff * mask
     num_pixels = torch.sum(mask)
     return torch.sum(torch.sqrt(torch.pow(diff, 2) + epsilon_sqr)) / (num_pixels + epsilon)
+
+
+# compute the MSE error given a prediction, a ground truth and a trimap.
+# pred: the predicted alpha matte
+# target: the ground truth alpha matte
+# trimap: the given trimap
+#
+def compute_mse_loss(pred, target, trimap):
+    error_map = (pred - target) / 255.
+    mask = np.equal(trimap, unknown_code).astype(np.float32)
+    # print('unknown: ' + str(unknown))
+    loss = np.sum(np.square(error_map) * mask) / np.sum(mask)
+    # print('mse_loss: ' + str(loss))
+    return loss
+
+
+# compute the SAD error given a prediction, a ground truth and a trimap.
+#
+def compute_sad_loss(pred, target, trimap):
+    error_map = np.abs(pred - target) / 255.
+    mask = np.equal(trimap, unknown_code).astype(np.float32)
+    loss = np.sum(error_map * mask)
+
+    # the loss is scaled by 1000 due to the large images used in our experiment.
+    loss = loss / 1000
+    # print('sad_loss: ' + str(loss))
+    return loss
+
+
+def get_final_output(out, trimap):
+    mask = np.equal(trimap, unknown_code).astype(np.float32)
+    return (1 - mask) * trimap + mask * out
+
+
+def draw_str(dst, target, s):
+    x, y = target
+    cv.putText(dst, s, (x + 1, y + 1), cv.FONT_HERSHEY_PLAIN, 1.0, (0, 0, 0), thickness=2, lineType=cv.LINE_AA)
+    cv.putText(dst, s, (x, y), cv.FONT_HERSHEY_PLAIN, 1.0, (255, 255, 255), lineType=cv.LINE_AA)
