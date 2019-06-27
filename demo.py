@@ -86,7 +86,7 @@ if __name__ == '__main__':
         x_test[0, 0:3, :, :] = img / 255.
         x_test[0, 3, :, :] = trimap / 255.
 
-        x_test = x_test.type(torch.FloatTensor).to(device)  # [1, 4, 320, 320]
+        x_test = torch.from_numpy(x_test).type(torch.FloatTensor).to(device)  # [1, 4, 320, 320]
 
         with torch.no_grad():
             y_pred = model(x_test)
