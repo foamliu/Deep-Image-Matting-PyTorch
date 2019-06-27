@@ -1,5 +1,5 @@
 # Deep Image Matting v2
-This repository is to reproduce Deep Image Matting.
+Deep Image Matting implementation in PyTorch.
 
 ## Dependencies
 - [NumPy](http://docs.scipy.org/doc/numpy-1.10.1/user/install.html)
