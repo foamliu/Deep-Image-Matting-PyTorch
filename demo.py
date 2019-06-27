@@ -1,10 +1,14 @@
 import math
 import os
 import random
-import torch
+
 import cv2 as cv
 import numpy as np
-from config import device
+import torch
+from torchvision import transforms
+
+from config import device, im_size
+from data_gen import data_transforms
 from data_gen import generate_trimap, random_choice, get_alpha_test
 from utils import compute_mse_loss, compute_sad_loss
 from utils import get_final_output, safe_crop, draw_str
@@ -28,14 +32,13 @@ def composite4(fg, bg, a, w, h):
 
 
 if __name__ == '__main__':
-    img_rows, img_cols = 320, 320
-    channel = 4
-
     checkpoint = 'BEST_checkpoint.tar'
     checkpoint = torch.load(checkpoint)
     model = checkpoint['model']
     model = model.to(device)
     model.eval()
+
+    transformer = data_transforms['valid']
 
     out_test_path = 'data/merged_test/'
     test_images = [f for f in os.listdir(out_test_path) if
@@ -77,18 +80,19 @@ if __name__ == '__main__':
         cv.imwrite('images/{}_trimap.png'.format(i), np.array(trimap).astype(np.uint8))
         cv.imwrite('images/{}_alpha.png'.format(i), np.array(alpha).astype(np.uint8))
 
-        x_test = np.empty((1, img_rows, img_cols, 4), dtype=np.float32)
-        x_test[0, :, :, 0:3] = bgr_img / 255.
+        img = bgr_img[..., ::-1]  # RGB
+        img = np.transpose(img, (2, 0, 1))
+
+        x_test = np.empty((1, 4, im_size, im_size), dtype=np.float32)
+        x_test[0, :, :, 0:3] = img / 255.
         x_test[0, :, :, 3] = trimap / 255.
 
-        y_true = np.empty((1, img_rows, img_cols, 2), dtype=np.float32)
-        y_true[0, :, :, 0] = alpha / 255.
-        y_true[0, :, :, 1] = trimap / 255.
+        with torch.no_grad():
+            y_pred = model(x_test)
 
-        y_pred = model(x_test)
-        # print('y_pred.shape: ' + str(y_pred.shape))
-
-        y_pred = np.reshape(y_pred, (img_rows, img_cols))
+        y_pred = y_pred.cpu().numpy()
+        print('y_pred.shape: ' + str(y_pred.shape))
+        y_pred = np.reshape(y_pred, (im_size, im_size))
         print(y_pred.shape)
         y_pred = y_pred * 255.0
         y_pred = get_final_output(y_pred, trimap)
@@ -106,12 +110,11 @@ if __name__ == '__main__':
         sample_bg = sample_bgs[i]
         bg = cv.imread(os.path.join(bg_test, sample_bg))
         bh, bw = bg.shape[:2]
-        wratio = img_cols / bw
-        hratio = img_rows / bh
+        wratio = im_size / bw
+        hratio = im_size / bh
         ratio = wratio if wratio > hratio else hratio
         if ratio > 1:
             bg = cv.resize(src=bg, dsize=(math.ceil(bw * ratio), math.ceil(bh * ratio)), interpolation=cv.INTER_CUBIC)
-        im, bg = composite4(bgr_img, bg, y_pred, img_cols, img_rows)
+        im, bg = composite4(bgr_img, bg, y_pred, im_size, im_size)
         cv.imwrite('images/{}_compose.png'.format(i), im)
         cv.imwrite('images/{}_new_bg.png'.format(i), bg)
-
