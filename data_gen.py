@@ -89,6 +89,7 @@ def generate_trimap(alpha):
     unknown = np.array(np.not_equal(alpha, 0).astype(np.float32))
     unknown = cv.dilate(unknown, kernel, iterations=np.random.randint(1, 20))
     trimap = fg * 255 + (unknown - fg) * 128
+    trimap = np.clip(trimap, 0, 255.0)
     return trimap.astype(np.uint8)
 
 
