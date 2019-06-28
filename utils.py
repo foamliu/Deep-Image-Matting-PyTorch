@@ -138,7 +138,7 @@ def alpha_prediction_loss(y_pred, y_true):
 # trimap: the given trimap
 #
 def compute_mse_loss(pred, target, trimap):
-    error_map = (pred - target) / 255.
+    error_map = (pred - target)
     mask = np.equal(trimap, unknown_code).astype(np.float32)
     # print('unknown: ' + str(unknown))
     loss = np.sum(np.square(error_map) * mask) / np.sum(mask)
@@ -149,7 +149,7 @@ def compute_mse_loss(pred, target, trimap):
 # compute the SAD error given a prediction, a ground truth and a trimap.
 #
 def compute_sad_loss(pred, target, trimap):
-    error_map = np.abs(pred - target) / 255.
+    error_map = np.abs(pred - target)
     mask = np.equal(trimap, unknown_code).astype(np.float32)
     loss = np.sum(error_map * mask)
 
@@ -161,7 +161,7 @@ def compute_sad_loss(pred, target, trimap):
 
 def get_final_output(out, trimap):
     mask = np.equal(trimap, unknown_code).astype(np.float32)
-    return (1 - mask) * trimap + mask * out
+    return (1 - mask) * trimap + mask * out * 255.0
 
 
 def draw_str(dst, target, s):
