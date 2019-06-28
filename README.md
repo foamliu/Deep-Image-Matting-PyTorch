@@ -34,7 +34,7 @@ $ python train.py
 
 If you want to visualize during training, run in your terminal:
 ```bash
-$ tensorboard --logdir path_to_current_dir/logs
+$ tensorboard --logdir runs
 ```
 
 ### Demo

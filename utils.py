@@ -56,27 +56,6 @@ class AverageMeter(object):
         self.avg = self.sum / self.count
 
 
-class LossMeterBag(object):
-
-    def __init__(self, name_list):
-        self.meter_dict = dict()
-        self.name_list = name_list
-        for name in self.name_list:
-            self.meter_dict[name] = AverageMeter()
-
-    def update(self, val_list):
-        for i, name in enumerate(self.name_list):
-            val = val_list[i]
-            self.meter_dict[name].update(val)
-
-    def __str__(self):
-        ret = ''
-        for name in self.name_list:
-            ret += '{0}:\t {1:.4f}({2:.4f})\t'.format(name, self.meter_dict[name].val, self.meter_dict[name].avg)
-
-        return ret
-
-
 def adjust_learning_rate(optimizer, shrink_factor):
     """
     Shrinks learning rate by a specified factor.
@@ -91,8 +70,7 @@ def adjust_learning_rate(optimizer, shrink_factor):
 
 
 def get_learning_rate(optimizer):
-    for param_group in optimizer.param_groups:
-        return param_group['lr']
+    return optimizer.param_groups[0]['lr']
 
 
 def accuracy(scores, targets, k=1):

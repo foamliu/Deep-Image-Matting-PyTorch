@@ -6,7 +6,7 @@ import cv2 as cv
 import numpy as np
 from torch.utils.data import Dataset
 from torchvision import transforms
-
+import torch
 from config import im_size, unknown_code, fg_path, bg_path, a_path, num_valid
 from utils import safe_crop
 
@@ -15,11 +15,11 @@ from utils import safe_crop
 data_transforms = {
     'train': transforms.Compose([
         transforms.ToTensor(),
-        # transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
+        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
     ]),
     'valid': transforms.Compose([
         transforms.ToTensor(),
-        # transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
     ]),
 }
 
@@ -122,7 +122,7 @@ class DIMDataset(Dataset):
         bcount = int(name.split('.')[0].split('_')[1])
         im_name = fg_files[fcount]
         bg_name = bg_files[bcount]
-        image, alpha, fg, bg = process(im_name, bg_name)
+        img, alpha, fg, bg = process(im_name, bg_name)
 
         # crop size 320:640:480 = 1:1:1
         different_sizes = [(320, 320), (480, 480), (640, 640)]
@@ -130,25 +130,24 @@ class DIMDataset(Dataset):
 
         trimap = generate_trimap(alpha)
         x, y = random_choice(trimap, crop_size)
-        image = safe_crop(image, x, y, crop_size)
+        img = safe_crop(img, x, y, crop_size)
         alpha = safe_crop(alpha, x, y, crop_size)
 
         trimap = generate_trimap(alpha)
 
         # Flip array left to right randomly (prob=1:1)
         if np.random.random_sample() > 0.5:
-            image = np.fliplr(image)
+            img = np.fliplr(img)
             trimap = np.fliplr(trimap)
             alpha = np.fliplr(alpha)
 
-        x = np.empty((4, im_size, im_size), dtype=np.float32)
-        img = image[..., ::-1]  # RGB
-        img = np.transpose(img, (2, 0, 1))
-        x[0:3, :, :] = img / 255.
+        x = torch.zeros((4, im_size, im_size), dtype=torch.float)
+        img = transforms.ToPILImage()(img)
+        img = self.transformer(img)
+        x[0:3, :, :] = img
         x[3, :, :] = trimap / 255.
 
         y = np.empty((2, im_size, im_size), dtype=np.float32)
-        alpha = alpha[..., ::-1]  # RGB
         y[0, :, :] = alpha / 255.
         mask = np.equal(trimap, 128).astype(np.float32)
         y[1, :, :] = mask
