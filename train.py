@@ -43,9 +43,6 @@ def train_net(args):
     # Move to GPU, if available
     model = model.to(device)
 
-    # Loss function
-    criterion = nn.MSELoss().to(device)
-
     # Custom dataloaders
     train_dataset = DIMDataset('train')
     train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True, num_workers=8)
@@ -63,7 +60,6 @@ def train_net(args):
         # One epoch's training
         train_loss = train(train_loader=train_loader,
                            model=model,
-                           criterion=criterion,
                            optimizer=optimizer,
                            epoch=epoch,
                            logger=logger)
@@ -75,7 +71,6 @@ def train_net(args):
         # One epoch's validation
         valid_loss = valid(valid_loader=valid_loader,
                            model=model,
-                           criterion=criterion,
                            logger=logger)
 
         writer.add_scalar('Valid_Loss', valid_loss, epoch)
@@ -96,7 +91,7 @@ def train_net(args):
         do_composite()
 
 
-def train(train_loader, model, criterion, optimizer, epoch, logger):
+def train(train_loader, model, optimizer, epoch, logger):
     model.train()  # train mode (dropout and batchnorm is used)
 
     losses = AverageMeter()
@@ -139,7 +134,7 @@ def train(train_loader, model, criterion, optimizer, epoch, logger):
     return losses.avg
 
 
-def valid(valid_loader, model, criterion, logger):
+def valid(valid_loader, model, logger):
     model.eval()  # eval mode (dropout and batchnorm is NOT used)
 
     losses = AverageMeter()
