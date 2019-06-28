@@ -4,9 +4,10 @@ import random
 
 import cv2 as cv
 import numpy as np
+import torch
 from torch.utils.data import Dataset
 from torchvision import transforms
-import torch
+
 from config import im_size, unknown_code, fg_path, bg_path, a_path, num_valid
 from utils import safe_crop
 
@@ -145,7 +146,7 @@ class DIMDataset(Dataset):
         img = transforms.ToPILImage()(img)
         img = self.transformer(img)
         x[0:3, :, :] = img
-        x[3, :, :] = trimap / 255.
+        x[3, :, :] = torch.from_numpy(trimap) / 255.
 
         y = np.empty((2, im_size, im_size), dtype=np.float32)
         y[0, :, :] = alpha / 255.
