@@ -1,10 +1,12 @@
 import math
 import os
 import random
+
 import cv2 as cv
 import numpy as np
 import torch
 from torchvision import transforms
+
 from config import device, im_size
 from data_gen import data_transforms, generate_trimap, random_choice, get_alpha_test
 from utils import compute_mse_loss, compute_sad_loss, ensure_folder, get_final_output, safe_crop, draw_str

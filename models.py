@@ -16,6 +16,7 @@ class conv2DBatchNormRelu(nn.Module):
             bias=True,
             dilation=1,
             with_bn=True,
+            with_relu=True
     ):
         super(conv2DBatchNormRelu, self).__init__()
 
@@ -28,11 +29,15 @@ class conv2DBatchNormRelu(nn.Module):
                              dilation=dilation, )
 
         if with_bn:
-            self.cbr_unit = nn.Sequential(conv_mod,
-                                          nn.BatchNorm2d(int(n_filters)),
-                                          nn.ReLU(inplace=True))
+            if with_relu:
+                self.cbr_unit = nn.Sequential(conv_mod, nn.BatchNorm2d(int(n_filters)), nn.ReLU(inplace=True))
+            else:
+                self.cbr_unit = nn.Sequential(conv_mod, nn.BatchNorm2d(int(n_filters)))
         else:
-            self.cbr_unit = nn.Sequential(conv_mod, nn.ReLU(inplace=True))
+            if with_relu:
+                self.cbr_unit = nn.Sequential(conv_mod, nn.ReLU(inplace=True))
+            else:
+                self.cbr_unit = nn.Sequential(conv_mod)
 
     def forward(self, inputs):
         outputs = self.cbr_unit(inputs)
@@ -71,33 +76,15 @@ class segnetDown3(nn.Module):
         return outputs, indices, unpooled_shape
 
 
-class segnetUp2(nn.Module):
-    def __init__(self, in_size, out_size):
-        super(segnetUp2, self).__init__()
+class segnetUp1(nn.Module):
+    def __init__(self, in_size, out_size, with_relu=True):
+        super(segnetUp1, self).__init__()
         self.unpool = nn.MaxUnpool2d(2, 2)
-        self.conv1 = conv2DBatchNormRelu(in_size, in_size, 3, 1, 1)
-        self.conv2 = conv2DBatchNormRelu(in_size, out_size, 3, 1, 1)
+        self.conv = conv2DBatchNormRelu(in_size, out_size, 5, 1, 1, with_relu=with_relu)
 
     def forward(self, inputs, indices, output_shape):
         outputs = self.unpool(input=inputs, indices=indices, output_size=output_shape)
-        outputs = self.conv1(outputs)
-        outputs = self.conv2(outputs)
-        return outputs
-
-
-class segnetUp3(nn.Module):
-    def __init__(self, in_size, out_size):
-        super(segnetUp3, self).__init__()
-        self.unpool = nn.MaxUnpool2d(2, 2)
-        self.conv1 = conv2DBatchNormRelu(in_size, in_size, 3, 1, 1)
-        self.conv2 = conv2DBatchNormRelu(in_size, in_size, 3, 1, 1)
-        self.conv3 = conv2DBatchNormRelu(in_size, out_size, 3, 1, 1)
-
-    def forward(self, inputs, indices, output_shape):
-        outputs = self.unpool(input=inputs, indices=indices, output_size=output_shape)
-        outputs = self.conv1(outputs)
-        outputs = self.conv2(outputs)
-        outputs = self.conv3(outputs)
+        outputs = self.conv(outputs)
         return outputs
 
 
@@ -115,11 +102,11 @@ class DIMModel(nn.Module):
         self.down4 = segnetDown3(256, 512)
         self.down5 = segnetDown3(512, 512)
 
-        self.up5 = segnetUp3(512, 512)
-        self.up4 = segnetUp3(512, 256)
-        self.up3 = segnetUp3(256, 128)
-        self.up2 = segnetUp2(128, 64)
-        self.up1 = segnetUp2(64, n_classes)
+        self.up5 = segnetUp1(512, 512)
+        self.up4 = segnetUp1(512, 256)
+        self.up3 = segnetUp1(256, 128)
+        self.up2 = segnetUp1(128, 64)
+        self.up1 = segnetUp1(64, n_classes, with_relu=False)
 
         self.sigmoid = nn.Sigmoid()
 
