@@ -116,7 +116,6 @@ class DIMModel(nn.Module):
             self.init_vgg16_params(vgg16)
 
     def forward(self, inputs):
-        print(inputs.size())
         # inputs: [N, 4, 320, 320]
         down1, indices_1, unpool_shape1 = self.down1(inputs)
         down2, indices_2, unpool_shape2 = self.down2(down1)
