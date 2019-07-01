@@ -8,7 +8,7 @@ from data_gen import DIMDataset
 from models import DIMModel
 from pre_process import do_composite
 from utils import parse_args, save_checkpoint, AverageMeter, clip_gradient, get_logger, get_learning_rate, \
-    alpha_prediction_loss, adjust_learning_rate
+    alpha_prediction_loss, adjust_learning_rate, compute_mse_loss, compute_sad_loss
 
 
 def train_net(args):
@@ -102,7 +102,7 @@ def train(train_loader, model, optimizer, epoch, logger):
     # Batches
     for i, (img, alpha_label) in enumerate(train_loader):
         # Move to GPU, if available
-        img = img.type(torch.FloatTensor).to(device)  # [N, 3, 320, 320]
+        img = img.type(torch.FloatTensor).to(device)  # [N, 4, 320, 320]
         alpha_label = alpha_label.type(torch.FloatTensor).to(device)  # [N, 320, 320]
         alpha_label = alpha_label.reshape((-1, 2, im_size * im_size))  # [N, 320*320]
 
@@ -113,7 +113,8 @@ def train(train_loader, model, optimizer, epoch, logger):
         # Calculate loss
         # loss = criterion(alpha_out, alpha_label)
         loss = alpha_prediction_loss(alpha_out, alpha_label)
-        mse = nn.MSELoss()(alpha_out, alpha_label)
+        mse = compute_mse_loss(alpha_out, alpha_label)
+        sad = compute_sad_loss(alpha_out, alpha_label)
 
         # Back prop.
         optimizer.zero_grad()
