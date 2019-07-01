@@ -58,22 +58,24 @@ def train_net(args):
             adjust_learning_rate(optimizer, 0.8)
 
         # One epoch's training
-        train_loss = train(train_loader=train_loader,
-                           model=model,
-                           optimizer=optimizer,
-                           epoch=epoch,
-                           logger=logger)
+        train_loss, train_mse = train(train_loader=train_loader,
+                                      model=model,
+                                      optimizer=optimizer,
+                                      epoch=epoch,
+                                      logger=logger)
         effective_lr = get_learning_rate(optimizer)
         print('Current effective learning rate: {}\n'.format(effective_lr))
 
         writer.add_scalar('Train_Loss', train_loss, epoch)
+        writer.add_scalar('Train_MSE', train_mse, epoch)
 
         # One epoch's validation
-        valid_loss = valid(valid_loader=valid_loader,
-                           model=model,
-                           logger=logger)
+        valid_loss, valid_mse = valid(valid_loader=valid_loader,
+                                      model=model,
+                                      logger=logger)
 
         writer.add_scalar('Valid_Loss', valid_loss, epoch)
+        writer.add_scalar('Valid_MSE', valid_mse, epoch)
 
         # Check if there was an improvement
         is_best = valid_loss < best_loss
@@ -135,7 +137,7 @@ def train(train_loader, model, optimizer, epoch, logger):
                      'MSE {mse.val:.4f} ({mse.avg:.4f})'.format(epoch, i, len(train_loader), loss=losses, mse=mses)
             logger.info(status)
 
-    return losses.avg
+    return losses.avg, mses.avg
 
 
 def valid(valid_loader, model, logger):
@@ -169,7 +171,7 @@ def valid(valid_loader, model, logger):
 
     logger.info(status)
 
-    return losses.avg
+    return losses.avg, mses.avg
 
 
 def main():
