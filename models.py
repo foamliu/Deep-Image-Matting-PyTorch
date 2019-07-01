@@ -119,9 +119,13 @@ class DIMModel(nn.Module):
         print(inputs.size())
         # inputs: [N, 4, 320, 320]
         down1, indices_1, unpool_shape1 = self.down1(inputs)
+        print('down1.size(): ' + str(down1.size()))
         down2, indices_2, unpool_shape2 = self.down2(down1)
+        print('down2.size(): ' + str(down2.size()))
         down3, indices_3, unpool_shape3 = self.down3(down2)
+        print('down3.size(): ' + str(down3.size()))
         down4, indices_4, unpool_shape4 = self.down4(down3)
+        print('down4.size(): ' + str(down4.size()))
         down5, indices_5, unpool_shape5 = self.down5(down4)
         print('down5.size(): ' + str(down5.size()))
 
