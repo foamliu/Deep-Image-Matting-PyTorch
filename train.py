@@ -138,6 +138,7 @@ def valid(valid_loader, model, logger):
     model.eval()  # eval mode (dropout and batchnorm is NOT used)
 
     losses = AverageMeter()
+    mses = AverageMeter()
 
     # Batches
     for img, alpha_label in valid_loader:
@@ -154,11 +155,14 @@ def valid(valid_loader, model, logger):
         # loss = criterion(alpha_out, alpha_label)
         loss = alpha_prediction_loss(alpha_out, alpha_label)
 
+        mse = nn.MSELoss()(alpha_out, alpha_label)
+
         # Keep track of metrics
         losses.update(loss.item())
+        mses.update(loss.mse())
 
     # Print status
-    status = 'Validation: Loss {loss.avg:.4f}\n'.format(loss=losses)
+    status = 'Validation: Loss {loss.avg:.4f}\t MSE{mse.avg:.4f}\n'.format(loss=losses, mse=mses)
 
     logger.info(status)
 
