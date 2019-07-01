@@ -119,26 +119,16 @@ class DIMModel(nn.Module):
         print(inputs.size())
         # inputs: [N, 4, 320, 320]
         down1, indices_1, unpool_shape1 = self.down1(inputs)
-        print('down1.size(): ' + str(down1.size()))
         down2, indices_2, unpool_shape2 = self.down2(down1)
-        print('down2.size(): ' + str(down2.size()))
         down3, indices_3, unpool_shape3 = self.down3(down2)
-        print('down3.size(): ' + str(down3.size()))
         down4, indices_4, unpool_shape4 = self.down4(down3)
-        print('down4.size(): ' + str(down4.size()))
         down5, indices_5, unpool_shape5 = self.down5(down4)
-        print('down5.size(): ' + str(down5.size()))
 
         up5 = self.up5(down5, indices_5, unpool_shape5)
-        print('up5.size(): ' + str(up5.size()))
         up4 = self.up4(up5, indices_4, unpool_shape4)
-        print('up4.size(): ' + str(up4.size()))
         up3 = self.up3(up4, indices_3, unpool_shape3)
-        print('up3.size(): ' + str(up3.size()))
         up2 = self.up2(up3, indices_2, unpool_shape2)
-        print('up2.size(): ' + str(up2.size()))
         up1 = self.up1(up2, indices_1, unpool_shape1)
-        print('up1.size(): ' + str(up1.size()))
 
         x = torch.squeeze(up1, dim=1)  # [N, 1, 320, 320] -> [N, 320, 320]
         x = self.sigmoid(x)
