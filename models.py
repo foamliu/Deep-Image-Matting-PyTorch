@@ -123,6 +123,7 @@ class DIMModel(nn.Module):
         down3, indices_3, unpool_shape3 = self.down3(down2)
         down4, indices_4, unpool_shape4 = self.down4(down3)
         down5, indices_5, unpool_shape5 = self.down5(down4)
+        print('down5.size(): ' + str(down5.size()))
 
         up5 = self.up5(down5, indices_5, unpool_shape5)
         up4 = self.up4(up5, indices_4, unpool_shape4)
