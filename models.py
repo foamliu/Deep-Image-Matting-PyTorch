@@ -77,10 +77,10 @@ class segnetDown3(nn.Module):
 
 
 class segnetUp1(nn.Module):
-    def __init__(self, in_size, out_size, with_relu=True):
+    def __init__(self, in_size, out_size):
         super(segnetUp1, self).__init__()
         self.unpool = nn.MaxUnpool2d(2, 2)
-        self.conv = conv2DBatchNormRelu(in_size, out_size, k_size=5, stride=1, padding=0, with_relu=with_relu)
+        self.conv = conv2DBatchNormRelu(in_size, out_size, k_size=5, stride=1, padding=0, with_relu=False)
 
     def forward(self, inputs, indices, output_shape):
         outputs = self.unpool(input=inputs, indices=indices, output_size=output_shape)
@@ -106,7 +106,7 @@ class DIMModel(nn.Module):
         self.up4 = segnetUp1(512, 256)
         self.up3 = segnetUp1(256, 128)
         self.up2 = segnetUp1(128, 64)
-        self.up1 = segnetUp1(64, n_classes, with_relu=False)
+        self.up1 = segnetUp1(64, n_classes)
 
         self.sigmoid = nn.Sigmoid()
 
@@ -130,10 +130,15 @@ class DIMModel(nn.Module):
         print('down5.size(): ' + str(down5.size()))
 
         up5 = self.up5(down5, indices_5, unpool_shape5)
+        print('up5.size(): ' + str(up5.size()))
         up4 = self.up4(up5, indices_4, unpool_shape4)
+        print('up4.size(): ' + str(up4.size()))
         up3 = self.up3(up4, indices_3, unpool_shape3)
+        print('up3.size(): ' + str(up3.size()))
         up2 = self.up2(up3, indices_2, unpool_shape2)
+        print('up2.size(): ' + str(up2.size()))
         up1 = self.up1(up2, indices_1, unpool_shape1)
+        print('up1.size(): ' + str(up1.size()))
 
         x = torch.squeeze(up1, dim=1)  # [N, 1, 320, 320] -> [N, 320, 320]
         x = self.sigmoid(x)
