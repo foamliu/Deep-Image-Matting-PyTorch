@@ -39,7 +39,7 @@ class conv2DBatchNormRelu(nn.Module):
             if with_relu:
                 self.cbr_unit = nn.Sequential(conv_mod, nn.ReLU(inplace=True))
             else:
-                self.cbr_unit = nn.Sequential(conv_mod, padding_mode=padding_mode)
+                self.cbr_unit = nn.Sequential(conv_mod)
 
     def forward(self, inputs):
         outputs = self.cbr_unit(inputs)
