@@ -161,6 +161,10 @@ def compute_sad_loss(pred, target, trimap):
 
 def get_final_output(out, trimap):
     mask = np.equal(trimap, unknown_code).astype(np.float32)
+    print('mask.shape: ' + str(mask.shape))
+    print('np.sum(mask): ' + str(np.sum(mask)))
+    print('np.max(mask): ' + str(np.max(mask)))
+    print('np.min(mask): ' + str(np.min(mask)))
     return (1 - mask) * trimap + mask * out
 
 

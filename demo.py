@@ -92,8 +92,6 @@ if __name__ == '__main__':
             y_pred = model(x_test)
 
         y_pred = y_pred.cpu().numpy()
-        print(np.min(y_pred))
-        print(np.max(y_pred))
         y_pred = y_pred * 255.
         # print('y_pred.shape: ' + str(y_pred.shape))
         y_pred = np.reshape(y_pred, (im_size, im_size))
