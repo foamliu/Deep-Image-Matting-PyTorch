@@ -95,6 +95,7 @@ def train(train_loader, model, optimizer, epoch, logger):
     model.train()  # train mode (dropout and batchnorm is used)
 
     losses = AverageMeter()
+    mses = AverageMeter()
 
     # Batches
     for i, (img, alpha_label) in enumerate(train_loader):
@@ -110,6 +111,7 @@ def train(train_loader, model, optimizer, epoch, logger):
         # Calculate loss
         # loss = criterion(alpha_out, alpha_label)
         loss = alpha_prediction_loss(alpha_out, alpha_label)
+        mse = nn.MSELoss()(alpha_out, alpha_label)
 
         # Back prop.
         optimizer.zero_grad()
@@ -123,12 +125,14 @@ def train(train_loader, model, optimizer, epoch, logger):
 
         # Keep track of metrics
         losses.update(loss.item())
+        mses.update(mse.item())
 
         # Print status
 
         if i % print_freq == 0:
             status = 'Epoch: [{0}][{1}/{2}]\t' \
-                     'Loss {loss.val:.4f} ({loss.avg:.4f})'.format(epoch, i, len(train_loader), loss=losses)
+                     'Loss {loss.val:.4f} ({loss.avg:.4f})\t' \
+                     'MSE {mse.val:.4f} ({mse.avg:.4f})'.format(epoch, i, len(train_loader), loss=losses, mse=mses)
             logger.info(status)
 
     return losses.avg
@@ -154,15 +158,14 @@ def valid(valid_loader, model, logger):
         # Calculate loss
         # loss = criterion(alpha_out, alpha_label)
         loss = alpha_prediction_loss(alpha_out, alpha_label)
-
         mse = nn.MSELoss()(alpha_out, alpha_label)
 
         # Keep track of metrics
         losses.update(loss.item())
-        mses.update(loss.mse())
+        mses.update(mse.item())
 
     # Print status
-    status = 'Validation: Loss {loss.avg:.4f}\t MSE{mse.avg:.4f}\n'.format(loss=losses, mse=mses)
+    status = 'Validation: Loss {loss.avg:.4f}\t MSE {mse.avg:.4f}\n'.format(loss=losses, mse=mses)
 
     logger.info(status)
 
