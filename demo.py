@@ -79,11 +79,11 @@ if __name__ == '__main__':
         cv.imwrite('images/{}_trimap.png'.format(i), np.array(trimap).astype(np.uint8))
         cv.imwrite('images/{}_alpha.png'.format(i), np.array(alpha).astype(np.uint8))
 
-        x_test = torch.zeros((4, im_size, im_size), dtype=torch.float)
+        x_test = torch.zeros((1, 4, im_size, im_size), dtype=torch.float)
         img = transforms.ToPILImage()(bgr_img)
         img = transformer(img)
-        x_test[0:3, :, :] = img
-        x_test[3, :, :] = torch.from_numpy(trimap.copy()) / 255.
+        x_test[0:, 0:3, :, :] = img
+        x_test[0:, 3, :, :] = torch.from_numpy(trimap.copy()) / 255.
 
         print(x_test.size())
 
