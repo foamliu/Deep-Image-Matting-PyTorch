@@ -47,8 +47,8 @@ class conv2DBatchNormRelu(nn.Module):
 class segnetDown2(nn.Module):
     def __init__(self, in_size, out_size):
         super(segnetDown2, self).__init__()
-        self.conv1 = conv2DBatchNormRelu(in_size, out_size, 3, 1, 1)
-        self.conv2 = conv2DBatchNormRelu(out_size, out_size, 3, 1, 1)
+        self.conv1 = conv2DBatchNormRelu(in_size, out_size, k_size=3, stride=1, padding=1)
+        self.conv2 = conv2DBatchNormRelu(out_size, out_size, k_size=3, stride=1, padding=1)
         self.maxpool_with_argmax = nn.MaxPool2d(2, 2, return_indices=True)
 
     def forward(self, inputs):
@@ -62,9 +62,9 @@ class segnetDown2(nn.Module):
 class segnetDown3(nn.Module):
     def __init__(self, in_size, out_size):
         super(segnetDown3, self).__init__()
-        self.conv1 = conv2DBatchNormRelu(in_size, out_size, 3, 1, 1)
-        self.conv2 = conv2DBatchNormRelu(out_size, out_size, 3, 1, 1)
-        self.conv3 = conv2DBatchNormRelu(out_size, out_size, 3, 1, 1)
+        self.conv1 = conv2DBatchNormRelu(in_size, out_size, k_size=3, stride=1, padding=1)
+        self.conv2 = conv2DBatchNormRelu(out_size, out_size, k_size=3, stride=1, padding=1)
+        self.conv3 = conv2DBatchNormRelu(out_size, out_size, k_size=3, stride=1, padding=1)
         self.maxpool_with_argmax = nn.MaxPool2d(2, 2, return_indices=True)
 
     def forward(self, inputs):
@@ -80,7 +80,7 @@ class segnetUp1(nn.Module):
     def __init__(self, in_size, out_size, with_relu=True):
         super(segnetUp1, self).__init__()
         self.unpool = nn.MaxUnpool2d(2, 2)
-        self.conv = conv2DBatchNormRelu(in_size, out_size, 5, 1, 1, with_relu=with_relu)
+        self.conv = conv2DBatchNormRelu(in_size, out_size, k_size=5, stride=1, padding=0, with_relu=with_relu)
 
     def forward(self, inputs, indices, output_shape):
         outputs = self.unpool(input=inputs, indices=indices, output_size=output_shape)
@@ -173,4 +173,4 @@ class DIMModel(nn.Module):
 if __name__ == '__main__':
     model = DIMModel().to(device)
 
-    summary(model, input_size=(4, im_size, im_size))
+    summary(model, (4, im_size, im_size))
