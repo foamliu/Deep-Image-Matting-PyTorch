@@ -160,9 +160,8 @@ def compute_sad_loss(pred, target, trimap):
 
 
 def get_final_output(out, trimap):
-    # mask = np.equal(trimap, unknown_code).astype(np.float32)
-    # return (1 - mask) * trimap + mask * out
-    return out
+    mask = np.equal(trimap, unknown_code).astype(np.float32)
+    return (1 - mask) * trimap + mask * out
 
 
 def draw_str(dst, target, s):
