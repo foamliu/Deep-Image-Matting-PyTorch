@@ -172,4 +172,4 @@ class DIMModel(nn.Module):
 if __name__ == '__main__':
     model = DIMModel().to(device)
 
-    summary(model, input_size=(2, 3, im_size, im_size))
+    summary(model, input_size=(3, im_size, im_size))
