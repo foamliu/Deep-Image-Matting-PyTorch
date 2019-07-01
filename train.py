@@ -8,7 +8,7 @@ from data_gen import DIMDataset
 from models import DIMModel
 from pre_process import do_composite
 from utils import parse_args, save_checkpoint, AverageMeter, clip_gradient, get_logger, get_learning_rate, \
-    alpha_prediction_loss, adjust_learning_rate, compute_mse_loss, compute_sad_loss
+    alpha_prediction_loss, adjust_learning_rate
 
 
 def train_net(args):
@@ -58,24 +58,22 @@ def train_net(args):
             adjust_learning_rate(optimizer, 0.8)
 
         # One epoch's training
-        train_loss, train_mse = train(train_loader=train_loader,
-                                      model=model,
-                                      optimizer=optimizer,
-                                      epoch=epoch,
-                                      logger=logger)
+        train_loss = train(train_loader=train_loader,
+                           model=model,
+                           optimizer=optimizer,
+                           epoch=epoch,
+                           logger=logger)
         effective_lr = get_learning_rate(optimizer)
         print('Current effective learning rate: {}\n'.format(effective_lr))
 
         writer.add_scalar('Train_Loss', train_loss, epoch)
-        writer.add_scalar('Train_MSE', train_mse, epoch)
 
         # One epoch's validation
-        valid_loss, valid_mse = valid(valid_loader=valid_loader,
-                                      model=model,
-                                      logger=logger)
+        valid_loss = valid(valid_loader=valid_loader,
+                           model=model,
+                           logger=logger)
 
         writer.add_scalar('Valid_Loss', valid_loss, epoch)
-        writer.add_scalar('Valid_MSE', valid_mse, epoch)
 
         # Check if there was an improvement
         is_best = valid_loss < best_loss
@@ -97,7 +95,6 @@ def train(train_loader, model, optimizer, epoch, logger):
     model.train()  # train mode (dropout and batchnorm is used)
 
     losses = AverageMeter()
-    mses = AverageMeter()
 
     # Batches
     for i, (img, alpha_label) in enumerate(train_loader):
@@ -113,8 +110,6 @@ def train(train_loader, model, optimizer, epoch, logger):
         # Calculate loss
         # loss = criterion(alpha_out, alpha_label)
         loss = alpha_prediction_loss(alpha_out, alpha_label)
-        mse = compute_mse_loss(alpha_out, alpha_label)
-        sad = compute_sad_loss(alpha_out, alpha_label)
 
         # Back prop.
         optimizer.zero_grad()
@@ -128,24 +123,21 @@ def train(train_loader, model, optimizer, epoch, logger):
 
         # Keep track of metrics
         losses.update(loss.item())
-        mses.update(mse.item())
 
         # Print status
 
         if i % print_freq == 0:
             status = 'Epoch: [{0}][{1}/{2}]\t' \
-                     'Loss {loss.val:.4f} ({loss.avg:.4f})\t' \
-                     'MSE {mse.val:.4f} ({mse.avg:.4f})'.format(epoch, i, len(train_loader), loss=losses, mse=mses)
+                     'Loss {loss.val:.4f} ({loss.avg:.4f})\t'.format(epoch, i, len(train_loader), loss=losses)
             logger.info(status)
 
-    return losses.avg, mses.avg
+    return losses.avg
 
 
 def valid(valid_loader, model, logger):
     model.eval()  # eval mode (dropout and batchnorm is NOT used)
 
     losses = AverageMeter()
-    mses = AverageMeter()
 
     # Batches
     for img, alpha_label in valid_loader:
@@ -161,18 +153,16 @@ def valid(valid_loader, model, logger):
         # Calculate loss
         # loss = criterion(alpha_out, alpha_label)
         loss = alpha_prediction_loss(alpha_out, alpha_label)
-        mse = nn.MSELoss()(alpha_out, alpha_label)
 
         # Keep track of metrics
         losses.update(loss.item())
-        mses.update(mse.item())
 
     # Print status
-    status = 'Validation: Loss {loss.avg:.4f}\t MSE {mse.avg:.4f}\n'.format(loss=losses, mse=mses)
+    status = 'Validation: Loss {loss.avg:.4f}\n'.format(loss=losses)
 
     logger.info(status)
 
-    return losses.avg, mses.avg
+    return losses.avg
 
 
 def main():
