@@ -73,7 +73,6 @@ if __name__ == '__main__':
 
         bgr_img = safe_crop(bgr_img, x, y, crop_size)
         alpha = safe_crop(alpha, x, y, crop_size)
-        alpha = alpha / 255.    # [0, 1.0]
         trimap = safe_crop(trimap, x, y, crop_size)
         cv.imwrite('images/{}_image.png'.format(i), np.array(bgr_img).astype(np.uint8))
         cv.imwrite('images/{}_trimap.png'.format(i), np.array(trimap).astype(np.uint8))
