@@ -13,6 +13,7 @@ class conv2DBatchNormRelu(nn.Module):
             k_size,
             stride,
             padding,
+            padding_mode='zeros',
             bias=True,
             dilation=1,
             with_bn=True,
@@ -24,6 +25,7 @@ class conv2DBatchNormRelu(nn.Module):
                              int(n_filters),
                              kernel_size=k_size,
                              padding=padding,
+                             padding_mode=padding_mode,
                              stride=stride,
                              bias=bias,
                              dilation=dilation, )
@@ -37,7 +39,7 @@ class conv2DBatchNormRelu(nn.Module):
             if with_relu:
                 self.cbr_unit = nn.Sequential(conv_mod, nn.ReLU(inplace=True))
             else:
-                self.cbr_unit = nn.Sequential(conv_mod)
+                self.cbr_unit = nn.Sequential(conv_mod, padding_mode=padding_mode)
 
     def forward(self, inputs):
         outputs = self.cbr_unit(inputs)
@@ -80,7 +82,8 @@ class segnetUp1(nn.Module):
     def __init__(self, in_size, out_size):
         super(segnetUp1, self).__init__()
         self.unpool = nn.MaxUnpool2d(2, 2)
-        self.conv = conv2DBatchNormRelu(in_size, out_size, k_size=5, stride=1, padding=0, with_relu=False)
+        self.conv = conv2DBatchNormRelu(in_size, out_size, k_size=5, stride=1, padding=1, padding_mode="border",
+                                        with_relu=False)
 
     def forward(self, inputs, indices, output_shape):
         outputs = self.unpool(input=inputs, indices=indices, output_size=output_shape)
