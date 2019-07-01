@@ -1,11 +1,10 @@
 import math
 import os
 import random
-
 import cv2 as cv
 import numpy as np
 import torch
-
+from torchvision import transforms
 from config import device, im_size
 from data_gen import data_transforms, generate_trimap, random_choice, get_alpha_test
 from utils import compute_mse_loss, compute_sad_loss, ensure_folder, get_final_output, safe_crop, draw_str
@@ -80,14 +79,11 @@ if __name__ == '__main__':
         cv.imwrite('images/{}_trimap.png'.format(i), np.array(trimap).astype(np.uint8))
         cv.imwrite('images/{}_alpha.png'.format(i), np.array(alpha).astype(np.uint8))
 
-        img = bgr_img[..., ::-1]  # RGB
-        img = np.transpose(img, (2, 0, 1))
-
-        x_test = np.empty((1, 4, im_size, im_size), dtype=np.float32)
-        x_test[0, 0:3, :, :] = img / 255.
-        x_test[0, 3, :, :] = trimap / 255.
-
-        x_test = torch.from_numpy(x_test).type(torch.FloatTensor).to(device)  # [1, 4, 320, 320]
+        x_test = torch.zeros((4, im_size, im_size), dtype=torch.float)
+        img = transforms.ToPILImage()(bgr_img)
+        img = transformer(img)
+        x_test[0:3, :, :] = img
+        x_test[3, :, :] = torch.from_numpy(trimap.copy()) / 255.
 
         with torch.no_grad():
             y_pred = model(x_test)
