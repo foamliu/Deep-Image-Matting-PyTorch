@@ -35,7 +35,7 @@ if __name__ == '__main__':
     for file in tqdm(files):
         filename = os.path.join(IMG_FOLDER, file)
         img = cv.imread(filename)
-        img = cv.resize(img, (im_size, im_size))
+        img = cv.resize(img, (im_size, im_size), cv.INTER_NEAREST)
         out_file = os.path.join('images/alphamatting', file)
         cv.imwrite(out_file, img)
 
