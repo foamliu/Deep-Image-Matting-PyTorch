@@ -81,3 +81,6 @@ $ python extract.py
 $ python eval.py
 ```
 
+Image | Trimap1 | Trimap2 | Trimap3|
+|---|---|---|---|
+|![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/0_image.png) 

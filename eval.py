@@ -36,10 +36,13 @@ if __name__ == '__main__':
         filename = os.path.join(IMG_FOLDER, file)
         img = cv.imread(filename)
         img = cv.resize(img, (im_size, im_size))
+        out_file = os.path.join('images/alphamatting', file)
+        cv.imwrite(out_file, img)
 
         for i in range(3):
             trimap = cv.imread(os.path.join(TRIMAP_FOLDERS[i], file), 0)
             trimap = cv.resize(trimap, (im_size, im_size), cv.INTER_NEAREST)
+            print(trimap.shape)
 
             x_test = torch.zeros((1, 4, im_size, im_size), dtype=torch.float)
             img = transforms.ToPILImage()(img)
