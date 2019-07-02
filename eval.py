@@ -10,9 +10,9 @@ from config import device, im_size
 from data_gen import data_transforms
 from utils import ensure_folder, get_final_output
 
-IMG_FOLDER = 'data/alphamatting/input_lowres'
-TRIMAP_FOLDERS = ['data/alphamatting/trimap_lowres/Trimap1', 'data/alphamatting/trimap_lowres/Trimap2',
-                  'data/alphamatting/trimap_lowres/Trimap3']
+IMG_FOLDER = 'data/alphamatting/'
+TRIMAP_FOLDERS = ['data/alphamatting/Trimap1', 'data/alphamatting/Trimap2',
+                  'data/alphamatting/Trimap3']
 OUTPUT_FOLDERS = ['images/alphamatting/Trimap1', 'images/alphamatting/Trimap2', 'images/alphamatting/Trimap3', ]
 
 if __name__ == '__main__':
