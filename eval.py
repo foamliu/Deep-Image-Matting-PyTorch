@@ -42,15 +42,12 @@ if __name__ == '__main__':
         for i in range(3):
             trimap = cv.imread(os.path.join(TRIMAP_FOLDERS[i], file), 0)
             trimap = cv.resize(trimap, (im_size, im_size), cv.INTER_NEAREST)
-            print(trimap.shape)
 
             x_test = torch.zeros((1, 4, im_size, im_size), dtype=torch.float)
             img = transforms.ToPILImage()(img)
             img = transformer(img)
             x_test[0:, 0:3, :, :] = img
             x_test[0:, 3, :, :] = torch.from_numpy(trimap.copy()) / 255.
-
-            print(x_test.size())
 
             with torch.no_grad():
                 y_pred = model(x_test)
