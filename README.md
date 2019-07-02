@@ -66,3 +66,18 @@ Image/Trimap | Output/GT | New BG/Compose |
 |![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/9_image.png)  | ![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/9_out.png)   | ![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/9_new_bg.png) |
 |![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/9_trimap.png) | ![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/9_alpha.png) | ![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/9_compose.png)|
 
+
+## The alphamatting.com dataset
+
+1. Download the evaluation datasets: Go to the [Datasets page](http://www.alphamatting.com/datasets.php) and download the evaluation datasets. Make sure you pick the low-resolution dataset.
+
+2. Extract evaluation images:
+```bash
+$ python extract.py
+```
+
+3. Evaluate:
+```bash
+$ python eval.py
+```
+
