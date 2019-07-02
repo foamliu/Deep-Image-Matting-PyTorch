@@ -39,7 +39,7 @@ if __name__ == '__main__':
 
         for i in range(3):
             trimap = cv.imread(os.path.join(TRIMAP_FOLDERS[i], file), 0)
-            trimap = cv.resize(img, (im_size, im_size), cv.INTER_NEAREST)
+            trimap = cv.resize(trimap, (im_size, im_size), cv.INTER_NEAREST)
 
             x_test = torch.zeros((1, 4, im_size, im_size), dtype=torch.float)
             img = transforms.ToPILImage()(img)
