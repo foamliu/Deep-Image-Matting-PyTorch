@@ -59,4 +59,4 @@ if __name__ == '__main__':
             y_pred = y_pred.astype(np.uint8)
 
             filename = os.path.join(OUTPUT_FOLDERS[i], file)
-            cv.imwrite('images/alphamatting/{}.png'.format(file), y_pred)
+            cv.imwrite(filename, y_pred)
