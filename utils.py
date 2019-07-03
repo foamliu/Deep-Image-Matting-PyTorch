@@ -6,7 +6,7 @@ import cv2 as cv
 import numpy as np
 import torch
 
-from config import im_size, epsilon, epsilon_sqr, unknown_code
+from config import im_size, epsilon, epsilon_sqr
 
 
 def clip_gradient(optimizer, grad_clip):
@@ -146,11 +146,6 @@ def compute_mse(pred, alpha, trimap):
 #
 def compute_sad(pred, alpha):
     return np.abs(pred - alpha).sum()
-
-
-def get_final_output(out, trimap):
-    mask = np.equal(trimap, unknown_code).astype(np.float32)
-    return (1 - mask) * trimap + mask * out
 
 
 def draw_str(dst, target, s):

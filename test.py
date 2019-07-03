@@ -1,16 +1,12 @@
-import os
 import random
 
-import cv2 as cv
 import torch
 from torchvision import transforms
 
 from config import device, im_size, print_freq
-from data_gen import data_transforms, process, generate_trimap, random_choice
-from utils import compute_mse_loss, compute_sad_loss, AverageMeter, get_logger
+from data_gen import data_transforms, process, generate_trimap, random_choice, fg_test_files, bg_test_files
+from utils import compute_mse, compute_sad, AverageMeter, get_logger
 from utils import safe_crop
-
-
 
 
 def gen_names():
@@ -26,9 +22,6 @@ def gen_names():
             bcount += 1
 
     return names
-
-
-
 
 
 if __name__ == '__main__':
@@ -87,8 +80,8 @@ if __name__ == '__main__':
 
         # Calculate loss
         # loss = criterion(alpha_out, alpha_label)
-        mse_loss = compute_mse_loss(alpha_out, alpha_label)
-        sad_loss = compute_sad_loss(alpha_out, alpha_label)
+        mse_loss = compute_mse(alpha_out, alpha_label, trimap)
+        sad_loss = compute_sad(alpha_out, alpha_label)
 
         # Keep track of metrics
         mse_losses.update(mse_loss.item())
