@@ -57,7 +57,7 @@ if __name__ == '__main__':
 
     logger = get_logger()
 
-    for i, name in tqdm(enumerate(names)):
+    for name in tqdm(names):
         fcount = int(name.split('.')[0].split('_')[0])
         bcount = int(name.split('.')[0].split('_')[1])
         im_name = fg_test_files[fcount]
