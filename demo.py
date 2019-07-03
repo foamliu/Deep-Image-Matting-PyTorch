@@ -23,7 +23,7 @@ def composite4(fg, bg, a, w, h):
         y = np.random.randint(0, bg_h - h)
     bg = np.array(bg[y:y + h, x:x + w], np.float32)
     alpha = np.zeros((h, w, 1), np.float32)
-    alpha[:, :, 0] = a / 255.
+    alpha[:, :, 0] = a
     im = alpha * fg + (1 - alpha) * bg
     im = im.astype(np.uint8)
     return im, bg
