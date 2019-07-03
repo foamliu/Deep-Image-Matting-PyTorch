@@ -10,10 +10,7 @@ from data_gen import data_transforms, process, generate_trimap, random_choice
 from utils import compute_mse_loss, compute_sad_loss, AverageMeter, get_logger
 from utils import safe_crop
 
-with open('data/Combined_Dataset/Test_set/test_fg_names.txt') as f:
-    fg_test_files = f.read().splitlines()
-with open('data/Combined_Dataset/Test_set/test_bg_names.txt') as f:
-    bg_test_files = f.read().splitlines()
+
 
 
 def gen_names():
@@ -31,12 +28,7 @@ def gen_names():
     return names
 
 
-def get_alpha_test(name):
-    fg_i = int(name.split("_")[0])
-    name = fg_test_files[fg_i]
-    filename = os.path.join('data/mask_test', name)
-    alpha = cv.imread(filename, 0)
-    return alpha
+
 
 
 if __name__ == '__main__':
