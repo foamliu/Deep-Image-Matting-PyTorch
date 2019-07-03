@@ -145,7 +145,7 @@ def compute_mse(pred, alpha, trimap):
 # compute the SAD error given a prediction, a ground truth and a trimap.
 #
 def compute_sad(pred, alpha):
-    return np.abs(pred - alpha).sum()
+    return np.abs(pred - alpha).sum() / 1000
 
 
 def draw_str(dst, target, s):
