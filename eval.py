@@ -8,7 +8,7 @@ from tqdm import tqdm
 
 from config import device, im_size
 from data_gen import data_transforms
-from utils import ensure_folder, get_final_output
+from utils import ensure_folder
 
 IMG_FOLDER = 'data/alphamatting/'
 TRIMAP_FOLDERS = ['data/alphamatting/Trimap1', 'data/alphamatting/Trimap2',
@@ -53,9 +53,11 @@ if __name__ == '__main__':
                 y_pred = model(x_test)
 
             y_pred = y_pred.cpu().numpy()
-            y_pred = y_pred * 255.
             y_pred = np.reshape(y_pred, (im_size, im_size))
-            y_pred = get_final_output(y_pred, trimap)
+            y_pred[trimap == 0] = 0.0
+            y_pred[trimap == 255] = 1.0
+
+            y_pred = y_pred * 255.
             y_pred = y_pred.astype(np.uint8)
 
             filename = os.path.join(OUTPUT_FOLDERS[i], file)
