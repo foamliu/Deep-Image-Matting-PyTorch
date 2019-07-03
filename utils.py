@@ -132,7 +132,7 @@ def alpha_prediction_loss(y_pred, y_true):
     return torch.sum(torch.sqrt(torch.pow(diff, 2) + epsilon_sqr)) / (num_pixels + epsilon)
 
 
-def mse_loss(y_pred, y_true):
+def compute_mse_loss(y_pred, y_true):
     mask = y_true[:, 1, :]
     diff = y_pred[:, 0, :] - y_true[:, 0, :]
     diff = diff * mask
@@ -140,7 +140,7 @@ def mse_loss(y_pred, y_true):
     return torch.sum(torch.pow(diff, 2)) / num_pixels
 
 
-def sad_loss(y_pred, y_true):
+def compute_sad_loss(y_pred, y_true):
     mask = y_true[:, 1, :]
     diff = torch.abs(y_pred[:, 0, :] - y_true[:, 0, :])
     diff = diff * mask
@@ -152,26 +152,26 @@ def sad_loss(y_pred, y_true):
 # target: the ground truth alpha matte
 # trimap: the given trimap
 #
-def compute_mse_loss(pred, target, trimap):
-    error_map = (pred - target) / 255.
-    mask = np.equal(trimap, unknown_code).astype(np.float32)
-    # print('unknown: ' + str(unknown))
-    loss = np.sum(np.square(error_map) * mask) / np.sum(mask)
-    # print('mse_loss: ' + str(loss))
-    return loss
+# def compute_mse_loss(pred, target, trimap):
+#     error_map = (pred - target) / 255.
+#     mask = np.equal(trimap, unknown_code).astype(np.float32)
+#     # print('unknown: ' + str(unknown))
+#     loss = np.sum(np.square(error_map) * mask) / np.sum(mask)
+#     # print('mse_loss: ' + str(loss))
+#     return loss
 
 
 # compute the SAD error given a prediction, a ground truth and a trimap.
 #
-def compute_sad_loss(pred, target, trimap):
-    error_map = np.abs(pred - target) / 255.
-    mask = np.equal(trimap, unknown_code).astype(np.float32)
-    loss = np.sum(error_map * mask)
-
-    # the loss is scaled by 1000 due to the large images used in our experiment.
-    loss = loss / 1000
-    # print('sad_loss: ' + str(loss))
-    return loss
+# def compute_sad_loss(pred, target, trimap):
+#     error_map = np.abs(pred - target) / 255.
+#     mask = np.equal(trimap, unknown_code).astype(np.float32)
+#     loss = np.sum(error_map * mask)
+#
+#     # the loss is scaled by 1000 due to the large images used in our experiment.
+#     loss = loss / 1000
+#     # print('sad_loss: ' + str(loss))
+#     return loss
 
 
 def get_final_output(out, trimap):

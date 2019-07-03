@@ -3,7 +3,7 @@ import torch
 from config import device, im_size, print_freq
 from data_gen import DIMDataset
 from data_gen import data_transforms
-from utils import mse_loss, sad_loss, AverageMeter, get_logger
+from utils import compute_mse_loss, compute_sad_loss, AverageMeter, get_logger
 
 if __name__ == '__main__':
     checkpoint = 'BEST_checkpoint.tar'
@@ -34,8 +34,8 @@ if __name__ == '__main__':
 
         # Calculate loss
         # loss = criterion(alpha_out, alpha_label)
-        mse_loss = mse_loss(alpha_out, alpha_label)
-        sad_loss = sad_loss(alpha_out, alpha_label)
+        mse_loss = compute_mse_loss(alpha_out, alpha_label)
+        sad_loss = compute_sad_loss(alpha_out, alpha_label)
 
         # Keep track of metrics
         mse_losses.update(mse_loss.item())
