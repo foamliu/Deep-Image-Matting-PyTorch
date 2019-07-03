@@ -89,6 +89,8 @@ if __name__ == '__main__':
         # Forward prop.
         alpha_out = model(img)  # [N, 320, 320]
         print(alpha_out.size())
+        alpha_out = alpha_out.cpu().numpy()
+        print(alpha_out.shape)
         alpha_out = alpha_out.reshape((-1, 1, im_size * im_size))  # [N, 320*320]
 
         # Calculate loss
