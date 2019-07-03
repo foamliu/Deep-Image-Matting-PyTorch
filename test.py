@@ -2,8 +2,9 @@ import random
 
 import torch
 from torchvision import transforms
+from tqdm import tqdm
 
-from config import device, im_size, print_freq
+from config import device, im_size
 from data_gen import data_transforms, process, generate_trimap, random_choice, fg_test_files, bg_test_files
 from utils import compute_mse, compute_sad, AverageMeter, get_logger
 from utils import safe_crop
@@ -40,7 +41,7 @@ if __name__ == '__main__':
 
     logger = get_logger()
 
-    for i, name in enumerate(names):
+    for i, name in tqdm(enumerate(names)):
         fcount = int(name.split('.')[0].split('_')[0])
         bcount = int(name.split('.')[0].split('_')[1])
         im_name = fg_test_files[fcount]
@@ -68,31 +69,20 @@ if __name__ == '__main__':
 
         # Move to GPU, if available
         img = img.type(torch.FloatTensor).to(device)  # [N, 3, 320, 320]
-        alpha_label = alpha_label.type(torch.FloatTensor).to(device)  # [N, 320, 320]
-        alpha_label = alpha_label.reshape((-1, 2, im_size * im_size))  # [N, 320*320]
+        alpha = alpha / 255.
 
         # Forward prop.
-        alpha_out = model(img)  # [N, 320, 320]
-        print(alpha_out.size())
-        alpha_out = alpha_out.cpu().numpy()
-        print(alpha_out.shape)
-        alpha_out = alpha_out.reshape((-1, 1, im_size * im_size))  # [N, 320*320]
+        pred = model(img)  # [1, 320, 320]
+        pred = pred.cpu().numpy()
+        pred = pred.reshape((im_size, im_size))  # [320, 320]
 
         # Calculate loss
         # loss = criterion(alpha_out, alpha_label)
-        mse_loss = compute_mse(alpha_out, alpha_label, trimap)
-        sad_loss = compute_sad(alpha_out, alpha_label)
+        mse_loss = compute_mse(pred, alpha, trimap)
+        sad_loss = compute_sad(pred, alpha)
 
         # Keep track of metrics
         mse_losses.update(mse_loss.item())
         sad_losses.update(sad_loss.item())
-
-        if i % print_freq == 0:
-            status = '[{0}/{1}]\t' \
-                     'MSE Loss {mse_loss.val:.4f} ({mse_loss.avg:.4f})\t' \
-                     'SAD Loss {sad_loss.val:.4f} ({sad_loss.avg:.4f})\t'.format(i, len(valid_loader),
-                                                                                 mse_loss=mse_losses,
-                                                                                 sad_loss=sad_losses)
-            logger.info(status)
 
     print("sad:{} mse:{}".format(sad_losses.avg, mse_losses.avg))
