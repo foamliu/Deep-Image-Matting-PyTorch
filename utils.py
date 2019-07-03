@@ -141,12 +141,12 @@ def compute_mse_loss(y_pred, y_true):
 
 
 def compute_sad_loss(y_pred, y_true):
+    alpha = y_true[:, 0, :]
+    pred = y_pred[:, 0, :]
     mask = y_true[:, 1, :]
-    y_true = y_true[:, 0, :]
-    y_pred = y_pred[:, 0, :]
-    y_pred[mask == 1] = 1.0
-    y_pred[mask == 0] = 0.0
-    diff = torch.abs(y_pred - y_true)
+    pred[mask == 1] = 1.0
+    pred[mask == 0] = 0.0
+    diff = torch.abs(pred - alpha)
     return torch.sum(diff) / 1000
 
 
