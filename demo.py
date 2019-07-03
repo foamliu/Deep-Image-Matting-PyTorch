@@ -99,9 +99,7 @@ if __name__ == '__main__':
         y_pred[trimap == 0] = 0.0
         y_pred[trimap == 255] = 1.0
 
-        alpha = alpha / 255.
-        print(np.max(alpha))
-        print(np.min(alpha))
+        alpha = alpha / 255.  # [0., 1.]
 
         sad = compute_sad(y_pred, alpha)
         mse = compute_mse(y_pred, alpha, trimap)
