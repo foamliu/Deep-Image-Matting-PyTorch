@@ -82,11 +82,11 @@ if __name__ == '__main__':
         x[0:, 3, :, :] = torch.from_numpy(trimap.copy()) / 255.
 
         # Move to GPU, if available
-        img = img.type(torch.FloatTensor).to(device)  # [N, 3, 320, 320]
+        x = x.type(torch.FloatTensor).to(device)  # [1, 4, 320, 320]
         alpha = alpha / 255.
 
         # Forward prop.
-        pred = model(img)  # [1, 320, 320]
+        pred = model(x)  # [1, 4, 320, 320]
         pred = pred.cpu().numpy()
         pred = pred.reshape((im_size, im_size))  # [320, 320]
 
