@@ -132,49 +132,21 @@ def alpha_prediction_loss(y_pred, y_true):
     return torch.sum(torch.sqrt(torch.pow(diff, 2) + epsilon_sqr)) / (num_pixels + epsilon)
 
 
-# def compute_mse_loss(y_pred, y_true):
-#     mask = y_true[:, 1, :]
-#     diff = y_pred[:, 0, :] - y_true[:, 0, :]
-#     diff = diff * mask
-#     num_pixels = torch.sum(mask)
-#     return torch.sum(torch.pow(diff, 2)) / num_pixels
-#
-#
-# def compute_sad_loss(y_pred, y_true):
-#     alpha = y_true[:, 0, :]
-#     pred = y_pred[:, 0, :]
-#     mask = y_true[:, 1, :]
-#     pred[mask == 1] = 1.0
-#     pred[mask == 0] = 0.0
-#     diff = torch.abs(pred - alpha)
-#     return torch.sum(diff) / 1000
-
-
 # compute the MSE error given a prediction, a ground truth and a trimap.
 # pred: the predicted alpha matte
 # target: the ground truth alpha matte
 # trimap: the given trimap
 #
-def compute_mse_loss(pred, target, trimap):
-    error_map = (pred - target) / 255.
-    mask = np.equal(trimap, unknown_code).astype(np.float32)
-    # print('unknown: ' + str(unknown))
-    loss = np.sum(np.square(error_map) * mask) / np.sum(mask)
-    # print('mse_loss: ' + str(loss))
-    return loss
+def compute_mse(pred, alpha, trimap):
+    num_pixels = float((trimap == 128).sum())
+    return ((pred - alpha) ** 2).sum() / num_pixels
 
 
 # compute the SAD error given a prediction, a ground truth and a trimap.
 #
-def compute_sad_loss(pred, target, trimap):
-    error_map = np.abs(pred - target) / 255.
-    mask = np.equal(trimap, unknown_code).astype(np.float32)
-    loss = np.sum(error_map * mask)
-
-    # the loss is scaled by 1000 due to the large images used in our experiment.
-    loss = loss / 1000
-    # print('sad_loss: ' + str(loss))
-    return loss
+def compute_sad(pred, alpha):
+    diff = np.abs(pred - alpha)
+    return np.sum(diff) / 1000
 
 
 def get_final_output(out, trimap):

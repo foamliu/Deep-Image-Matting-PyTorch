@@ -9,7 +9,7 @@ from torchvision import transforms
 
 from config import device, im_size
 from data_gen import data_transforms, generate_trimap, random_choice, get_alpha_test
-from utils import compute_mse_loss, compute_sad_loss, ensure_folder, get_final_output, safe_crop, draw_str
+from utils import compute_mse, compute_sad, ensure_folder, safe_crop, draw_str
 
 
 def composite4(fg, bg, a, w, h):
@@ -92,20 +92,21 @@ if __name__ == '__main__':
             y_pred = model(x_test)
 
         y_pred = y_pred.cpu().numpy()
-        y_pred = y_pred * 255.
         # print('y_pred.shape: ' + str(y_pred.shape))
         y_pred = np.reshape(y_pred, (im_size, im_size))
         # print(y_pred.shape)
 
-        y_pred = get_final_output(y_pred, trimap)
-        y_pred = y_pred.astype(np.uint8)
+        y_pred[trimap == 0] = 0.0
+        y_pred[trimap == 255] = 1.0
 
-        sad_loss = compute_sad_loss(y_pred, alpha, trimap)
-        mse_loss = compute_mse_loss(y_pred, alpha, trimap)
-        str_msg = 'sad_loss: %.4f, mse_loss: %.4f, crop_size: %s' % (sad_loss, mse_loss, str(crop_size))
+        alpha = alpha / 255.
+
+        sad = compute_sad(y_pred, alpha)
+        mse = compute_mse(y_pred, alpha, trimap)
+        str_msg = 'sad: %.4f, mse: %.4f, size: %s' % (sad, mse, str(crop_size))
         print(str_msg)
 
-        out = y_pred.copy()
+        out = (y_pred * 255).astype(np.uint8)
         draw_str(out, (10, 20), str_msg)
         cv.imwrite('images/{}_out.png'.format(i), out)
 
