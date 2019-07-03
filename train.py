@@ -54,7 +54,7 @@ def train_net(args):
             break
 
         if epochs_since_improvement > 0 and epochs_since_improvement % 2 == 0:
-            adjust_learning_rate(optimizer, 0.8)
+            adjust_learning_rate(optimizer, 0.6)
 
         # One epoch's training
         train_loss = train(train_loader=train_loader,
