@@ -33,4 +33,8 @@ bg_path = 'data/bg/'
 # Path to folder where you want the composited images to go
 out_path = 'data/merged/'
 
+fg_path_test = 'data/fg_test/'
+a_path_test = 'data/mask_test/'
+bg_path_test = 'data/bg_test/'
+out_path_test = 'data/merged_test/'
 ##############################################################
