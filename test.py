@@ -1,14 +1,14 @@
 import math
-import random
 
 import cv2 as cv
+import numpy as np
 import torch
 from torchvision import transforms
 from tqdm import tqdm
 
 from config import device, im_size, fg_path_test, a_path_test, bg_path_test
-from data_gen import data_transforms, composite4, gen_trimap, random_choice, fg_test_files, bg_test_files
-from utils import compute_mse, compute_sad, AverageMeter, get_logger, safe_crop
+from data_gen import data_transforms, gen_trimap, fg_test_files, bg_test_files
+from utils import compute_mse, compute_sad, AverageMeter, get_logger
 
 
 def gen_test_names():
@@ -38,7 +38,24 @@ def process_test(im_name, bg_name):
     if ratio > 1:
         bg = cv.resize(src=bg, dsize=(math.ceil(bw * ratio), math.ceil(bh * ratio)), interpolation=cv.INTER_CUBIC)
 
-    return composite4(im, bg, a, w, h)
+    return composite4_test(im, bg, a, w, h)
+
+
+def composite4_test(fg, bg, a, w, h):
+    fg = np.array(fg, np.float32)
+    bg_h, bg_w = bg.shape[:2]
+    x = 0
+    if bg_w > w:
+        x = max(0, bg_w - w)
+    y = 0
+    if bg_h > h:
+        y = max(0, bg_h - h)
+    bg = np.array(bg[y:y + h, x:x + w], np.float32)
+    alpha = np.zeros((h, w, 1), np.float32)
+    alpha[:, :, 0] = a / 255.
+    im = alpha * fg + (1 - alpha) * bg
+    im = im.astype(np.uint8)
+    return im, a, fg, bg
 
 
 if __name__ == '__main__':
@@ -64,18 +81,20 @@ if __name__ == '__main__':
         bg_name = bg_test_files[bcount]
         img, alpha, fg, bg = process_test(im_name, bg_name)
 
+        h, w = img[:2]
+
         # crop size 320:640:480 = 1:1:1
-        different_sizes = [(320, 320), (480, 480), (640, 640)]
-        crop_size = random.choice(different_sizes)
+        # different_sizes = [(320, 320), (480, 480), (640, 640)]
+        # crop_size = random.choice(different_sizes)
+        #
+        # trimap = gen_trimap(alpha)
+        # x, y = random_choice(trimap, crop_size)
+        # img = safe_crop(img, x, y, crop_size)
+        # alpha = safe_crop(alpha, x, y, crop_size)
 
         trimap = gen_trimap(alpha)
-        x, y = random_choice(trimap, crop_size)
-        img = safe_crop(img, x, y, crop_size)
-        alpha = safe_crop(alpha, x, y, crop_size)
 
-        trimap = gen_trimap(alpha)
-
-        x = torch.zeros((1, 4, im_size, im_size), dtype=torch.float)
+        x = torch.zeros((1, 4, h, w), dtype=torch.float)
         img = transforms.ToPILImage()(img)  # [3, 320, 320]
         img = transformer(img)  # [3, 320, 320]
         x[0:, 0:3, :, :] = img
