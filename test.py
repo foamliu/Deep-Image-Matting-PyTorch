@@ -85,8 +85,9 @@ if __name__ == '__main__':
         x = x.type(torch.FloatTensor).to(device)  # [1, 4, 320, 320]
         alpha = alpha / 255.
 
-        # Forward prop.
-        pred = model(x)  # [1, 4, 320, 320]
+        with torch.no_grad():
+            pred = model(x)  # [1, 4, 320, 320]
+
         pred = pred.cpu().numpy()
         pred = pred.reshape((im_size, im_size))  # [320, 320]
 
