@@ -132,6 +132,21 @@ def alpha_prediction_loss(y_pred, y_true):
     return torch.sum(torch.sqrt(torch.pow(diff, 2) + epsilon_sqr)) / (num_pixels + epsilon)
 
 
+def mse_loss(y_pred, y_true):
+    mask = y_true[:, 1, :]
+    diff = y_pred[:, 0, :] - y_true[:, 0, :]
+    diff = diff * mask
+    num_pixels = torch.sum(mask)
+    return torch.sum(torch.pow(diff, 2) + epsilon_sqr) / (num_pixels + epsilon)
+
+
+def sad_loss(y_pred, y_true):
+    mask = y_true[:, 1, :]
+    diff = y_pred[:, 0, :] - y_true[:, 0, :]
+    diff = diff * mask
+    return torch.sum(diff) / 1000
+
+
 # compute the MSE error given a prediction, a ground truth and a trimap.
 # pred: the predicted alpha matte
 # target: the ground truth alpha matte
