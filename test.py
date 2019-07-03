@@ -6,7 +6,7 @@ import torch
 from torchvision import transforms
 from tqdm import tqdm
 
-from config import device, im_size, fg_path_test, a_path_test, bg_path_test
+from config import device, fg_path_test, a_path_test, bg_path_test
 from data_gen import data_transforms, gen_trimap, fg_test_files, bg_test_files
 from utils import compute_mse, compute_sad, AverageMeter, get_logger
 
