@@ -146,11 +146,6 @@ def compute_mse(pred, alpha, trimap):
 #
 def compute_sad(pred, alpha):
     diff = np.abs(pred - alpha)
-    print(diff.shape)
-    print(diff)
-    print(np.max(diff))
-    print(np.min(diff))
-    print(np.sum(diff))
     return np.sum(diff) / 1000
 
 
