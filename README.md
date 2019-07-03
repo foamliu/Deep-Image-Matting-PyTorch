@@ -2,9 +2,7 @@
 Deep Image Matting implementation in PyTorch.
 
 ## Dependencies
-- [NumPy](http://docs.scipy.org/doc/numpy-1.10.1/user/install.html)
-- [PyTorch](https://pytorch.org/)
-- [OpenCV](https://opencv-python-tutroals.readthedocs.io/en/latest/)
+- PyTorch 1.0
 
 ## Dataset
 ### Adobe Deep Image Matting Dataset
