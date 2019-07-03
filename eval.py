@@ -8,7 +8,7 @@ from tqdm import tqdm
 
 from config import device, im_size
 from data_gen import data_transforms
-from utils import ensure_folder
+from utils import ensure_folder, compute_mse, compute_sad
 
 IMG_FOLDER = 'data/alphamatting/'
 TRIMAP_FOLDERS = ['data/alphamatting/Trimap1', 'data/alphamatting/Trimap2',
