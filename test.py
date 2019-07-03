@@ -7,7 +7,7 @@ from torchvision import transforms
 from tqdm import tqdm
 
 from config import device, im_size, fg_path_test, a_path_test, bg_path_test
-from data_gen import data_transforms, composite4, generate_trimap, random_choice, fg_test_files, bg_test_files
+from data_gen import data_transforms, composite4, gen_trimap, random_choice, fg_test_files, bg_test_files
 from utils import compute_mse, compute_sad, AverageMeter, get_logger, safe_crop
 
 
@@ -68,12 +68,12 @@ if __name__ == '__main__':
         different_sizes = [(320, 320), (480, 480), (640, 640)]
         crop_size = random.choice(different_sizes)
 
-        trimap = generate_trimap(alpha)
+        trimap = gen_trimap(alpha)
         x, y = random_choice(trimap, crop_size)
         img = safe_crop(img, x, y, crop_size)
         alpha = safe_crop(alpha, x, y, crop_size)
 
-        trimap = generate_trimap(alpha)
+        trimap = gen_trimap(alpha)
 
         x = torch.zeros((1, 4, im_size, im_size), dtype=torch.float)
         img = transforms.ToPILImage()(img)  # [3, 320, 320]

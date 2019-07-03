@@ -8,7 +8,7 @@ import torch
 from torchvision import transforms
 
 from config import device, im_size
-from data_gen import data_transforms, generate_trimap, random_choice, get_alpha_test
+from data_gen import data_transforms, gen_trimap, random_choice, get_alpha_test
 from utils import compute_mse, compute_sad, ensure_folder, safe_crop, draw_str
 
 
@@ -67,7 +67,7 @@ if __name__ == '__main__':
 
         alpha = np.zeros((bg_h, bg_w), np.float32)
         alpha[0:a_h, 0:a_w] = a
-        trimap = generate_trimap(alpha)
+        trimap = gen_trimap(alpha)
         different_sizes = [(320, 320), (320, 320), (320, 320), (480, 480), (640, 640)]
         crop_size = random.choice(different_sizes)
         x, y = random_choice(trimap, crop_size)

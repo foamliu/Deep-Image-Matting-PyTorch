@@ -83,14 +83,27 @@ def process(im_name, bg_name):
     return composite4(im, bg, a, w, h)
 
 
-def generate_trimap(alpha):
-    fg = np.array(np.equal(alpha, 255).astype(np.float32))
-    # fg = cv.erode(fg, kernel, iterations=np.random.randint(1, 3))
-    unknown = np.array(np.not_equal(alpha, 0).astype(np.float32))
-    unknown = cv.dilate(unknown, kernel, iterations=np.random.randint(1, 20))
-    trimap = fg * 255 + (unknown - fg) * 128
-    trimap = np.clip(trimap, 0, 255.0)
-    return trimap.astype(np.uint8)
+# def gen_trimap(alpha):
+#     fg = np.array(np.equal(alpha, 255).astype(np.float32))
+#     # fg = cv.erode(fg, kernel, iterations=np.random.randint(1, 3))
+#     unknown = np.array(np.not_equal(alpha, 0).astype(np.float32))
+#     unknown = cv.dilate(unknown, kernel, iterations=np.random.randint(1, 20))
+#     trimap = fg * 255 + (unknown - fg) * 128
+#     trimap = np.clip(trimap, 0, 255.0)
+#     return trimap.astype(np.uint8)
+
+
+def gen_trimap(alpha):
+    k_size = random.choice(range(1, 5))
+    iterations = np.random.randint(1, 20)
+    kernel = cv.getStructuringElement(cv.MORPH_ELLIPSE, (k_size, k_size))
+    dilated = cv.dilate(alpha, kernel, iterations)
+    eroded = cv.erode(alpha, kernel, iterations)
+    trimap = np.zeros(alpha.shape)
+    trimap.fill(128)
+    trimap[eroded >= 255] = 255
+    trimap[dilated <= 0] = 0
+    return trimap
 
 
 # Randomly crop (image, trimap) pairs centered on pixels in the unknown regions.
@@ -130,12 +143,12 @@ class DIMDataset(Dataset):
         different_sizes = [(320, 320), (480, 480), (640, 640)]
         crop_size = random.choice(different_sizes)
 
-        trimap = generate_trimap(alpha)
+        trimap = gen_trimap(alpha)
         x, y = random_choice(trimap, crop_size)
         img = safe_crop(img, x, y, crop_size)
         alpha = safe_crop(alpha, x, y, crop_size)
 
-        trimap = generate_trimap(alpha)
+        trimap = gen_trimap(alpha)
 
         # Flip array left to right randomly (prob=1:1)
         if np.random.random_sample() > 0.5:
