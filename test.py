@@ -81,7 +81,7 @@ if __name__ == '__main__':
         bg_name = bg_test_files[bcount]
         img, alpha, fg, bg = process_test(im_name, bg_name)
 
-        h, w = img[:2]
+        h, w = img.shape[:2]
 
         # crop size 320:640:480 = 1:1:1
         # different_sizes = [(320, 320), (480, 480), (640, 640)]
