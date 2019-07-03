@@ -15,7 +15,7 @@ if __name__ == '__main__':
     transformer = data_transforms['valid']
 
     valid_dataset = DIMDataset('valid')
-    valid_loader = torch.utils.data.DataLoader(valid_dataset, batch_size=16, shuffle=False, num_workers=8)
+    valid_loader = torch.utils.data.DataLoader(valid_dataset, batch_size=2, shuffle=False, num_workers=8)
 
     mse_losses = AverageMeter()
     sad_losses = AverageMeter()
@@ -48,3 +48,5 @@ if __name__ == '__main__':
                                                                                  mse_loss=mse_losses,
                                                                                  sad_loss=sad_losses)
             logger.info(status)
+
+    print("sad:{} mse:{}".format(sad_losses.avg, mse_losses.avg))

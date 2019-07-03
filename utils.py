@@ -142,7 +142,7 @@ def mse_loss(y_pred, y_true):
 
 def sad_loss(y_pred, y_true):
     mask = y_true[:, 1, :]
-    diff = y_pred[:, 0, :] - y_true[:, 0, :]
+    diff = torch.abs(y_pred[:, 0, :] - y_true[:, 0, :])
     diff = diff * mask
     return torch.sum(diff) / 1000
 
