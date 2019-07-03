@@ -81,8 +81,6 @@ if __name__ == '__main__':
         x[0:3, :, :] = img
         x[3, :, :] = torch.from_numpy(trimap.copy()) / 255.
 
-        img = torch.from_numpy(x)
-
         # Move to GPU, if available
         img = img.type(torch.FloatTensor).to(device)  # [N, 3, 320, 320]
         alpha = alpha / 255.
