@@ -91,6 +91,9 @@ if __name__ == '__main__':
         pred = pred.cpu().numpy()
         pred = pred.reshape((im_size, im_size))  # [320, 320]
 
+        pred[trimap == 0] = 0.0
+        pred[trimap == 255] = 1.0
+
         # Calculate loss
         # loss = criterion(alpha_out, alpha_label)
         mse_loss = compute_mse(pred, alpha, trimap)
