@@ -20,7 +20,7 @@ Deep Image Matting [paper](https://arxiv.org/abs/1703.03872) implementation in P
 |paper-stage0|59.6|0.019|
 |paper-stage1|54.6|0.017|
 |paper-stage3|50.4|0.014|
-|my-stage0|40.7|0.014|
+|my-stage0|39.8|0.014|
 
 It seems perform better than the paper, this confused me. Please kindly let me know for any bugs.
 
