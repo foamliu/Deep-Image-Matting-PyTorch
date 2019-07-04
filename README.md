@@ -22,8 +22,6 @@ Deep Image Matting [paper](https://arxiv.org/abs/1703.03872) implementation in P
 |paper-stage3|50.4|0.014|
 |my-stage0|39.8|0.014|
 
-It seems perform better than the paper, this confused me. Please kindly let me know for any bugs.
-
 
 ## Dataset
 ### Adobe Deep Image Matting Dataset
