@@ -1,5 +1,5 @@
 # Deep Image Matting v2
-Deep Image Matting implementation in PyTorch.
+Deep Image Matting [paper](https://arxiv.org/abs/1703.03872) implementation in PyTorch.
 
 ## Performance
 - the Composition-1k testing dataset.
