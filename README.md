@@ -15,11 +15,13 @@ Deep Image Matting implementation in PyTorch.
 |paper-stage3|50.4|0.014|
 |my-stage0|40.7|0.014|
 
-It confused me that it performs better than the paper, please kindly let me know for any bugs in test code.
+It performs better than the paper, this is confusing me. Please kindly let me know for any bugs.
 <p>
-Difference between this model and paper: "fc6" is dropped instead of transformed to a convolutional layer.
-It is clumpy, over 100 millions parameters, makes the model hard to converge. <br>
-I guess it is the reason why the model (paper) has to be trained stagewisely.
+Major differences from the paper: 
+
+1. "fc6" is dropped instead of transformed to a convolutional layer.
+<br>It is clumpy, over 100 millions parameters, makes the model hard to converge. I guess it is the reason why the model (paper) has to be trained stagewisely.
+2. Indices pooling preserves details.
 
 
 ## Dataset
