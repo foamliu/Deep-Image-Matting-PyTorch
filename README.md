@@ -1,8 +1,16 @@
 # Deep Image Matting v2
 Deep Image Matting implementation in PyTorch.
 
-## Dependencies
-- PyTorch 1.0
+## Performance
+- the Composition-1k testing dataset.
+- evaluate with whole image.
+- SAD normalized by 1000.
+- input image is normalized with mean=[0.485, 0.456, 0.406] and std=[0.229, 0.224, 0.225].
+- erode and dialte to generate trimap
+
+|Models|SAD|MSE|
+|---|---|---|
+|Encoder-Decoder network<br>(single alpha prediction loss)|40.7|0.014|
 
 ## Dataset
 ### Adobe Deep Image Matting Dataset
