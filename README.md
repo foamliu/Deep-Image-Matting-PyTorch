@@ -58,7 +58,7 @@ $ tensorboard --logdir runs
 
 ## Experimental results
 
-# The Composition-1k testing dataset
+### The Composition-1k testing dataset
 
 1. Test:
 ```bash
@@ -67,7 +67,7 @@ $ python test.py
 
 It prints out average SAD and MSE errors when finished.
 
-# The alphamatting.com dataset
+### The alphamatting.com dataset
 
 1. Download the evaluation datasets: Go to the [Datasets page](http://www.alphamatting.com/datasets.php) and download the evaluation datasets. Make sure you pick the low-resolution dataset.
 
