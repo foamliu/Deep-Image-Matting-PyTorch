@@ -1,6 +1,13 @@
 # Deep Image Matting v2
 Deep Image Matting [paper](https://arxiv.org/abs/1703.03872) implementation in PyTorch.
 
+## Differences
+
+1. "fc6" is dropped.
+2. Indices pooling is added to preserve details.
+
+<p>"fc6" is clumpy, over 100 millions parameters, makes the model hard to converge. I guess it is the reason why the model (paper) has to be trained stagewisely.
+
 ## Performance
 - the Composition-1k testing dataset.
 - evaluate with whole image.
@@ -15,13 +22,7 @@ Deep Image Matting [paper](https://arxiv.org/abs/1703.03872) implementation in P
 |paper-stage3|50.4|0.014|
 |my-stage0|40.7|0.014|
 
-It performs better than the paper, this is confusing me. Please kindly let me know for any bugs.
-<p>
-Major differences from the paper: 
-
-1. "fc6" is dropped instead of transformed to a convolutional layer.
-<br>It is clumpy, over 100 millions parameters, makes the model hard to converge. I guess it is the reason why the model (paper) has to be trained stagewisely.
-2. Indices pooling preserves details.
+It seems perform better than the paper, this confused me. Please kindly let me know for any bugs.
 
 
 ## Dataset
