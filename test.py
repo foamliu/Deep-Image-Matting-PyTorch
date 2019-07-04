@@ -69,8 +69,8 @@ def composite4_test(fg, bg, a, w, h):
     im = alpha * fg + (1 - alpha) * crop
     im = im.astype(np.uint8)
 
-    new_a = np.zeros((bg_h, bg_w, 1), np.float32)
-    new_a[y:y + h, x:x + w, 0] = a
+    new_a = np.zeros((bg_h, bg_w), np.uint8)
+    new_a[y:y + h, x:x + w] = a
     new_im = bg.copy()
     new_im[y:y + h, x:x + w] = im
     print('new_im.shape: ' + str(new_im.shape))
