@@ -10,7 +10,17 @@ Deep Image Matting implementation in PyTorch.
 
 |Models|SAD|MSE|
 |---|---|---|
-|Encoder-Decoder network<br>(single alpha prediction loss)|40.7|0.014|
+|paper-stage0|59.6|0.019|
+|paper-stage1|54.6|0.017|
+|paper-stage3|50.4|0.014|
+|my-stage0|40.7|0.014|
+
+It confused me that it performs better than the paper, please kindly let me know for any bugs in test code.
+<p>
+Difference between this model and paper: "fc6" is dropped instead of transformed to a convolutional layer.
+It is clumpy, over 100 millions parameters, makes the model hard to converge. <br>
+I guess it is the reason why the model (paper) has to be trained stagewisely.
+
 
 ## Dataset
 ### Adobe Deep Image Matting Dataset
@@ -43,6 +53,42 @@ If you want to visualize during training, run in your terminal:
 $ tensorboard --logdir runs
 ```
 
+## Experimental results
+
+# The Composition-1k testing dataset
+
+1. Test:
+```bash
+$ python test.py
+```
+
+It prints out average SAD and MSE errors when finished.
+
+# The alphamatting.com dataset
+
+1. Download the evaluation datasets: Go to the [Datasets page](http://www.alphamatting.com/datasets.php) and download the evaluation datasets. Make sure you pick the low-resolution dataset.
+
+2. Extract evaluation images:
+```bash
+$ python extract.py
+```
+
+3. Evaluate:
+```bash
+$ python eval.py
+```
+
+Image | Trimap1 | Trimap2 | Trimap3|
+|---|---|---|---|
+|![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/doll.png) |![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/Trimap1/doll.png)|![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/Trimap2/doll.png)|![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/Trimap3/doll.png)|
+|![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/donkey.png) |![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/Trimap1/donkey.png)|![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/Trimap2/donkey.png)|![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/Trimap3/donkey.png)|
+|![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/elephant.png) |![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/Trimap1/elephant.png)|![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/Trimap2/elephant.png)|![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/Trimap3/elephant.png)|
+|![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/net.png) |![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/Trimap1/net.png)|![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/Trimap2/net.png)|![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/Trimap3/net.png)|
+|![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/pineapple.png) |![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/Trimap1/pineapple.png)|![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/Trimap2/pineapple.png)|![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/Trimap3/pineapple.png)|
+|![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/plant.png) |![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/Trimap1/plant.png)|![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/Trimap2/plant.png)|![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/Trimap3/plant.png)|
+|![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/plasticbag.png) |![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/Trimap1/plasticbag.png)|![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/Trimap2/plasticbag.png)|![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/Trimap3/plasticbag.png)|
+|![image
+
 ### Demo
 Download pre-trained Deep Image Matting [Model](https://github.com/foamliu/Deep-Image-Matting-v2/releases/download/v1.0/final.42-0.0398.hdf5) to "models" folder then run:
 ```bash
@@ -73,27 +119,4 @@ Image/Trimap | Output/GT | New BG/Compose |
 |![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/9_trimap.png) | ![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/9_alpha.png) | ![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/9_compose.png)|
 
 
-## The alphamatting.com dataset
-
-1. Download the evaluation datasets: Go to the [Datasets page](http://www.alphamatting.com/datasets.php) and download the evaluation datasets. Make sure you pick the low-resolution dataset.
-
-2. Extract evaluation images:
-```bash
-$ python extract.py
-```
-
-3. Evaluate:
-```bash
-$ python eval.py
-```
-
-Image | Trimap1 | Trimap2 | Trimap3|
-|---|---|---|---|
-|![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/doll.png) |![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/Trimap1/doll.png)|![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/Trimap2/doll.png)|![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/Trimap3/doll.png)|
-|![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/donkey.png) |![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/Trimap1/donkey.png)|![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/Trimap2/donkey.png)|![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/Trimap3/donkey.png)|
-|![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/elephant.png) |![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/Trimap1/elephant.png)|![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/Trimap2/elephant.png)|![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/Trimap3/elephant.png)|
-|![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/net.png) |![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/Trimap1/net.png)|![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/Trimap2/net.png)|![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/Trimap3/net.png)|
-|![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/pineapple.png) |![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/Trimap1/pineapple.png)|![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/Trimap2/pineapple.png)|![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/Trimap3/pineapple.png)|
-|![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/plant.png) |![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/Trimap1/plant.png)|![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/Trimap2/plant.png)|![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/Trimap3/plant.png)|
-|![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/plasticbag.png) |![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/Trimap1/plasticbag.png)|![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/Trimap2/plasticbag.png)|![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/Trimap3/plasticbag.png)|
-|![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/troll.png) |![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/Trimap1/troll.png)|![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/Trimap2/troll.png)|![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/Trimap3/troll.png)|
+](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/troll.png) |![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/Trimap1/troll.png)|![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/Trimap2/troll.png)|![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/Trimap3/troll.png)|
