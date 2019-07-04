@@ -73,10 +73,6 @@ def composite4_test(fg, bg, a, w, h):
     new_a[y:y + h, x:x + w] = a
     new_im = bg.copy()
     new_im[y:y + h, x:x + w] = im
-    print('new_im.shape: ' + str(new_im.shape))
-    print('new_a.shape: ' + str(new_a.shape))
-    print('fg.shape: ' + str(fg.shape))
-    print('bg.shape: ' + str(bg.shape))
     return new_im, new_a, fg, bg
 
 
