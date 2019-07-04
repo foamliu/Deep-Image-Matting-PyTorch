@@ -41,36 +41,43 @@ def process_test(im_name, bg_name):
     return composite4_test(im, bg, a, w, h)
 
 
-# def composite4_test(fg, bg, a, w, h):
-#     fg = np.array(fg, np.float32)
-#     bg_h, bg_w = bg.shape[:2]
-#     x = max(0, int((bg_w - w)/2))
-#     y = max(0, int((bg_h - h)/2))
-#     bg = np.array(bg[y:y + h, x:x + w], np.float32)
-#     alpha = np.zeros((h, w, 1), np.float32)
-#     alpha[:, :, 0] = a / 255.
-#     im = alpha * fg + (1 - alpha) * bg
-#     im = im.astype(np.uint8)
-#     return im, a, fg, bg
-
-
 def composite4_test(fg, bg, a, w, h):
     fg = np.array(fg, np.float32)
     bg_h, bg_w = bg.shape[:2]
     x = max(0, int((bg_w - w)/2))
     y = max(0, int((bg_h - h)/2))
-    crop = np.array(bg[y:y + h, x:x + w], np.float32)
+    bg = np.array(bg[y:y + h, x:x + w], np.float32)
     alpha = np.zeros((h, w, 1), np.float32)
     alpha[:, :, 0] = a / 255.
-    im = alpha * fg + (1 - alpha) * crop
+    im = alpha * fg + (1 - alpha) * bg
     im = im.astype(np.uint8)
+    print('im.shape: ' + str(im.shape))
+    print('a.shape: ' + str(a.shape))
+    print('fg.shape: ' + str(fg.shape))
+    print('bg.shape: ' + str(bg.shape))
+    return im, a, fg, bg
 
-    new_a = np.zeros((bg_h, bg_w, 1), np.float32)
-    new_a[y:y + h, x:x + w, 0] = a
-    new_im = bg.copy()
-    new_im[y:y + h, x:x + w] = im
 
-    return new_im, new_a, fg, bg
+# def composite4_test(fg, bg, a, w, h):
+#     fg = np.array(fg, np.float32)
+#     bg_h, bg_w = bg.shape[:2]
+#     x = max(0, int((bg_w - w)/2))
+#     y = max(0, int((bg_h - h)/2))
+#     crop = np.array(bg[y:y + h, x:x + w], np.float32)
+#     alpha = np.zeros((h, w, 1), np.float32)
+#     alpha[:, :, 0] = a / 255.
+#     im = alpha * fg + (1 - alpha) * crop
+#     im = im.astype(np.uint8)
+#
+#     new_a = np.zeros((bg_h, bg_w, 1), np.float32)
+#     new_a[y:y + h, x:x + w, 0] = a
+#     new_im = bg.copy()
+#     new_im[y:y + h, x:x + w] = im
+#     print('im.shape: ' + str(im.shape))
+#     print('a.shape: ' + str(a.shape))
+#     print('fg.shape: ' + str(fg.shape))
+#     print('bg.shape: ' + str(bg.shape))
+#     return new_im, new_a, fg, bg
 
 
 if __name__ == '__main__':
