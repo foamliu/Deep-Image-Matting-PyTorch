@@ -44,12 +44,8 @@ def process_test(im_name, bg_name):
 def composite4_test(fg, bg, a, w, h):
     fg = np.array(fg, np.float32)
     bg_h, bg_w = bg.shape[:2]
-    x = 0
-    if bg_w > w:
-        x = max(0, bg_w - w)
-    y = 0
-    if bg_h > h:
-        y = max(0, bg_h - h)
+    x = max(0, bg_w - w)
+    y = max(0, bg_h - h)
     bg = np.array(bg[y:y + h, x:x + w], np.float32)
     alpha = np.zeros((h, w, 1), np.float32)
     alpha[:, :, 0] = a / 255.
