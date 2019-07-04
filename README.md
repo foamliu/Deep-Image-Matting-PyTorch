@@ -80,6 +80,8 @@ $ python extract.py
 $ python eval.py
 ```
 
+Click to view whole images:
+
 Image | Trimap1 | Trimap2 | Trimap3|
 |---|---|---|---|
 |![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/doll.png) |![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/Trimap1/doll.png)|![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/Trimap2/doll.png)|![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/Trimap3/doll.png)|
