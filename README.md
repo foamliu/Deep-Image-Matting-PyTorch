@@ -121,6 +121,3 @@ Image/Trimap | Output/GT | New BG/Compose |
 |![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/8_trimap.png) | ![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/8_alpha.png) | ![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/8_compose.png)|
 |![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/9_image.png)  | ![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/9_out.png)   | ![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/9_new_bg.png) |
 |![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/9_trimap.png) | ![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/9_alpha.png) | ![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/9_compose.png)|
-
-
-](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/troll.png) |![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/Trimap1/troll.png)|![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/Trimap2/troll.png)|![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/Trimap3/troll.png)|
