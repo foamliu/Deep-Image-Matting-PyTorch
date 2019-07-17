@@ -59,7 +59,7 @@ def train_net(args):
             model = checkpoint['model']
             optimizer = checkpoint['optimizer']
 
-            adjust_learning_rate(optimizer, 0.6)
+            adjust_learning_rate(optimizer, 0.8)
 
         # One epoch's training
         train_loss = train(train_loader=train_loader,

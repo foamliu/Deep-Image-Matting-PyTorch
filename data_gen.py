@@ -15,6 +15,7 @@ from utils import safe_crop
 # Just normalization for validation
 data_transforms = {
     'train': transforms.Compose([
+        transforms.ColorJitter(brightness=0.125, contrast=0.125, saturation=0.125),
         transforms.ToTensor(),
         transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
     ]),
@@ -83,16 +84,6 @@ def process(im_name, bg_name):
     return composite4(im, bg, a, w, h)
 
 
-# def gen_trimap(alpha):
-#     fg = np.array(np.equal(alpha, 255).astype(np.float32))
-#     # fg = cv.erode(fg, kernel, iterations=np.random.randint(1, 3))
-#     unknown = np.array(np.not_equal(alpha, 0).astype(np.float32))
-#     unknown = cv.dilate(unknown, kernel, iterations=np.random.randint(1, 20))
-#     trimap = fg * 255 + (unknown - fg) * 128
-#     trimap = np.clip(trimap, 0, 255.0)
-#     return trimap.astype(np.uint8)
-
-
 def gen_trimap(alpha):
     k_size = random.choice(range(1, 5))
     iterations = np.random.randint(1, 20)
@@ -157,6 +148,7 @@ class DIMDataset(Dataset):
             alpha = np.fliplr(alpha)
 
         x = torch.zeros((4, im_size, im_size), dtype=torch.float)
+        img = img[..., ::-1]  # RGB
         img = transforms.ToPILImage()(img)
         img = self.transformer(img)
         x[0:3, :, :] = img
