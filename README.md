@@ -15,13 +15,16 @@ Deep Image Matting [paper](https://arxiv.org/abs/1703.03872) implementation in P
 - input image is normalized with mean=[0.485, 0.456, 0.406] and std=[0.229, 0.224, 0.225].
 - erode and dialte to generate trimap
 
-|Models|SAD|MSE|Link|
+|Models|SAD|MSE|Download|
 |---|---|---|---|
 |paper-stage0|59.6|0.019||
 |paper-stage1|54.6|0.017||
 |paper-stage3|50.4|0.014||
-|my-stage0|39.3|0.013||
+|my-stage0|TBD|TBD||
 
+## Dependencies
+
+- PyTorch 1.0.1.post2
 
 ## Dataset
 ### Adobe Deep Image Matting Dataset
@@ -93,7 +96,7 @@ Image | Trimap1 | Trimap2 | Trimap3|
 |![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/troll.png) |![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/Trimap1/troll.png)|![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/Trimap2/troll.png)|![image](https://github.com/foamliu/Deep-Image-Matting-v2/raw/master/images/alphamatting/Trimap3/troll.png)|
 
 ### Demo
-Download pre-trained Deep Image Matting [Model](https://github.com/foamliu/Deep-Image-Matting-v2/releases/download/v1.0/final.42-0.0398.hdf5) to "models" folder then run:
+Download pre-trained Deep Image Matting [Link](https://github.com/foamliu/Deep-Image-Matting-v2/releases/download/v1.0/BEST_checkpoint.tar) then run:
 ```bash
 $ python demo.py
 ```
