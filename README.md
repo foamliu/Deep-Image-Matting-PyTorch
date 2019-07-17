@@ -15,12 +15,12 @@ Deep Image Matting [paper](https://arxiv.org/abs/1703.03872) implementation in P
 - input image is normalized with mean=[0.485, 0.456, 0.406] and std=[0.229, 0.224, 0.225].
 - erode and dialte to generate trimap
 
-|Models|SAD|MSE|
-|---|---|---|
-|paper-stage0|59.6|0.019|
-|paper-stage1|54.6|0.017|
-|paper-stage3|50.4|0.014|
-|my-stage0|TBD|TBD|
+|Models|SAD|MSE|Link|
+|---|---|---|---|
+|paper-stage0|59.6|0.019||
+|paper-stage1|54.6|0.017||
+|paper-stage3|50.4|0.014||
+|my-stage0|39.3|0.013||
 
 
 ## Dataset
