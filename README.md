@@ -22,6 +22,9 @@ Deep Image Matting [paper](https://arxiv.org/abs/1703.03872) implementation in P
 |paper-stage3|50.4|0.014||
 |my-stage0|39.3|0.013|[Link](https://github.com/foamliu/Deep-Image-Matting-v2/releases/download/v1.0/BEST_checkpoint.tar)|
 
+## Dependencies
+
+- PyTorch 1.0.1.post2
 
 ## Dataset
 ### Adobe Deep Image Matting Dataset
