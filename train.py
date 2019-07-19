@@ -50,16 +50,16 @@ def train_net(args):
 
     # Epochs
     for epoch in range(start_epoch, args.end_epoch):
-        if epochs_since_improvement == 10:
-            break
+        # if epochs_since_improvement == 10:
+        #     break
+        #
+        # if epochs_since_improvement > 0 and epochs_since_improvement % 2 == 0:
+        #     checkpoint = 'BEST_checkpoint.tar'
+        #     checkpoint = torch.load(checkpoint)
+        #     model = checkpoint['model']
+        #     optimizer = checkpoint['optimizer']
 
-        if epochs_since_improvement > 0 and epochs_since_improvement % 2 == 0:
-            checkpoint = 'BEST_checkpoint.tar'
-            checkpoint = torch.load(checkpoint)
-            model = checkpoint['model']
-            optimizer = checkpoint['optimizer']
-
-            adjust_learning_rate(optimizer, 0.8)
+        adjust_learning_rate(optimizer, 0.93)
 
         # One epoch's training
         train_loss = train(train_loader=train_loader,
