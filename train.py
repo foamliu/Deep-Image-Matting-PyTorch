@@ -71,6 +71,7 @@ def train_net(args):
         print('Current effective learning rate: {}\n'.format(effective_lr))
 
         writer.add_scalar('Train_Loss', train_loss, epoch)
+        writer.add_scalar('Learning_Rate', effective_lr, epoch)
 
         # One epoch's validation
         valid_loss = valid(valid_loader=valid_loader,
