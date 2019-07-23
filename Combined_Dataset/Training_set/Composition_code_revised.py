@@ -24,9 +24,9 @@ out_path = 'data/merged/'
 
 num_bgs = 100
 
-with open('data/Combined_Dataset/Training_set/training_bg_names.txt') as f:
+with open('Combined_Dataset/Training_set/training_bg_names.txt') as f:
     bg_files = f.read().splitlines()
-with open('data/Combined_Dataset/Training_set/training_fg_names.txt') as f:
+with open('Combined_Dataset/Training_set/training_fg_names.txt') as f:
     fg_files = f.read().splitlines()
 
 
