@@ -148,6 +148,7 @@ class DIMDataset(Dataset):
             alpha = np.fliplr(alpha)
 
         x = torch.zeros((4, im_size, im_size), dtype=torch.float)
+        img = img[..., ::-1]  # RGB
         img = transforms.ToPILImage()(img)
         img = self.transformer(img)
         x[0:3, :, :] = img
