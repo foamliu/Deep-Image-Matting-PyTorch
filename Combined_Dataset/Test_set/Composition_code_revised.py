@@ -24,9 +24,9 @@ out_path = 'data/merged_test/'
 
 num_bgs = 20
 
-with open('data/Combined_Dataset/Test_set/test_bg_names.txt') as f:
+with open('Combined_Dataset/Test_set/test_bg_names.txt') as f:
     bg_files = f.read().splitlines()
-with open('data/Combined_Dataset/Test_set/test_fg_names.txt') as f:
+with open('Combined_Dataset/Test_set/test_fg_names.txt') as f:
     fg_files = f.read().splitlines()
 
 
