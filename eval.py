@@ -6,9 +6,9 @@ import torch
 from torchvision import transforms
 from tqdm import tqdm
 
-from config import device, im_size
+from config import device
 from data_gen import data_transforms
-from utils import ensure_folder, compute_mse, compute_sad
+from utils import ensure_folder
 
 IMG_FOLDER = 'data/alphamatting/'
 TRIMAP_FOLDERS = ['data/alphamatting/Trimap1', 'data/alphamatting/Trimap2',
@@ -36,15 +36,15 @@ if __name__ == '__main__':
         filename = os.path.join(IMG_FOLDER, file)
         img = cv.imread(filename)
         h, w = img.shape[:2]
-        # img = cv.resize(img, (im_size, im_size), cv.INTER_NEAREST)
+
         out_file = os.path.join('images/alphamatting', file)
         cv.imwrite(out_file, img)
 
         for i in range(3):
             trimap = cv.imread(os.path.join(TRIMAP_FOLDERS[i], file), 0)
-            # trimap = cv.resize(trimap, (im_size, im_size), cv.INTER_NEAREST)
 
             x_test = torch.zeros((1, 4, h, w), dtype=torch.float)
+            img = img[..., ::-1]  # RGB
             img = transforms.ToPILImage()(img)
             img = transformer(img)
             x_test[0:, 0:3, :, :] = img
