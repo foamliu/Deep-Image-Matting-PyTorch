@@ -75,17 +75,17 @@ if __name__ == '__main__':
 
         bgr_img = safe_crop(bgr_img, x, y, crop_size)
         alpha = safe_crop(alpha, x, y, crop_size)
-        trimap = safe_crop(trimap, x, y, crop_size)
+        trimap = safe_crop(trimap, x, y, crop_size).astype(np.uint8)
         cv.imwrite('images/{}_image.png'.format(i), np.array(bgr_img).astype(np.uint8))
-        cv.imwrite('images/{}_trimap.png'.format(i), np.array(trimap).astype(np.uint8))
+        cv.imwrite('images/{}_trimap.png'.format(i), trimap)
         cv.imwrite('images/{}_alpha.png'.format(i), np.array(alpha).astype(np.uint8))
 
         x_test = torch.zeros((1, 4, im_size, im_size), dtype=torch.float)
         img = bgr_img[..., ::-1]  # RGB
         img = transforms.ToPILImage()(img)
         img = transformer(img)
-        x_test[0:, 0:3, :, :] = img
-        x_test[0:, 3, :, :] = torch.from_numpy(trimap.copy()) / 255.
+        x_test[0, 0:3, :, :] = img
+        x_test[0, 3, :, :] = torch.from_numpy(trimap.copy()) / 255.
 
         print(x_test.size())
 
