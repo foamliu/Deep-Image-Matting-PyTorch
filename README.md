@@ -9,11 +9,11 @@ Deep Image Matting [paper](https://arxiv.org/abs/1703.03872) implementation in P
 <p>"fc6" is clumpy, over 100 millions parameters, makes the model hard to converge. I guess it is the reason why the model (paper) has to be trained stagewisely.
 
 ## Performance
-- the Composition-1k testing dataset.
-- evaluate with whole image.
+- The Composition-1k testing dataset.
+- Evaluate with whole image.
 - SAD normalized by 1000.
-- input image is normalized with mean=[0.485, 0.456, 0.406] and std=[0.229, 0.224, 0.225].
-- erode and dialte to generate trimap
+- Input image is normalized with mean=[0.485, 0.456, 0.406] and std=[0.229, 0.224, 0.225].
+- Both erode and dialte to generate trimap.
 
 |Models|SAD|MSE|Download|
 |---|---|---|---|
