@@ -104,6 +104,7 @@ if __name__ == '__main__':
         trimap = gen_trimap(alpha)
 
         x = torch.zeros((1, 4, h, w), dtype=torch.float)
+        img = img[..., ::-1]  # RGB
         img = transforms.ToPILImage()(img)  # [3, 320, 320]
         img = transformer(img)  # [3, 320, 320]
         x[0:, 0:3, :, :] = img
