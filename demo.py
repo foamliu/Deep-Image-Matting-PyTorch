@@ -44,6 +44,11 @@ if __name__ == '__main__':
     names = gen_test_names()
     names = random.sample(names, 10)
 
+    bg_test = 'data/bg_test/'
+    new_bgs = [f for f in os.listdir(bg_test) if
+                os.path.isfile(os.path.join(bg_test, f)) and f.endswith('.jpg')]
+    new_bgs = random.sample(new_bgs, 10)
+
     for i, name in enumerate(names):
         fcount = int(name.split('.')[0].split('_')[0])
         bcount = int(name.split('.')[0].split('_')[1])
@@ -92,14 +97,14 @@ if __name__ == '__main__':
         draw_str(out, (10, 20), str_msg)
         cv.imwrite('images/{}_out.png'.format(i), out)
 
-        # sample_bg = sample_bgs[i]
-        # bg = cv.imread(os.path.join(bg_test, sample_bg))
-        # bh, bw = bg.shape[:2]
-        # wratio = im_size / bw
-        # hratio = im_size / bh
-        # ratio = wratio if wratio > hratio else hratio
-        # if ratio > 1:
-        #     bg = cv.resize(src=bg, dsize=(math.ceil(bw * ratio), math.ceil(bh * ratio)), interpolation=cv.INTER_CUBIC)
-        # im, bg = composite4(bgr_img, bg, y_pred, im_size, im_size)
-        # cv.imwrite('images/{}_compose.png'.format(i), im)
-        # cv.imwrite('images/{}_new_bg.png'.format(i), bg)
+        new_bg = new_bgs[i]
+        new_bg = cv.imread(os.path.join(bg_test, new_bg))
+        bh, bw = bg.shape[:2]
+        wratio = w / bw
+        hratio = h / bh
+        ratio = wratio if wratio > hratio else hratio
+        if ratio > 1:
+            bg = cv.resize(src=bg, dsize=(math.ceil(bw * ratio), math.ceil(bh * ratio)), interpolation=cv.INTER_CUBIC)
+        im, bg = composite4(img, new_bg, pred, w, h)
+        cv.imwrite('images/{}_compose.png'.format(i), im)
+        cv.imwrite('images/{}_new_bg.png'.format(i), new_bg)
