@@ -67,10 +67,10 @@ if __name__ == '__main__':
         cv.imwrite('images/{}_trimap.png'.format(i), trimap)
 
         x = torch.zeros((1, 4, h, w), dtype=torch.float)
-        img = img[..., ::-1]  # RGB
-        img = transforms.ToPILImage()(img)  # [3, 320, 320]
-        img = transformer(img)  # [3, 320, 320]
-        x[0:, 0:3, :, :] = img
+        image = img[..., ::-1]  # RGB
+        image = transforms.ToPILImage()(image)  # [3, 320, 320]
+        image = transformer(image)  # [3, 320, 320]
+        x[0:, 0:3, :, :] = image
         x[0:, 3, :, :] = torch.from_numpy(trimap.copy()) / 255.
 
         # Move to GPU, if available
@@ -105,6 +105,7 @@ if __name__ == '__main__':
         ratio = wratio if wratio > hratio else hratio
         if ratio > 1:
             bg = cv.resize(src=bg, dsize=(math.ceil(bw * ratio), math.ceil(bh * ratio)), interpolation=cv.INTER_CUBIC)
+
         im, bg = composite4(img, new_bg, pred, w, h)
         cv.imwrite('images/{}_compose.png'.format(i), im)
         cv.imwrite('images/{}_new_bg.png'.format(i), new_bg)
