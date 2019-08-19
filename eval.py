@@ -51,6 +51,7 @@ if __name__ == '__main__':
             x[0:, 3, :, :] = torch.from_numpy(trimap.copy()) / 255.
             print(torch.max(x[0:, 3, :, :]))
             print(torch.min(x[0:, 3, :, :]))
+            print(torch.median(x[0:, 3, :, :]))
 
             # Move to GPU, if available
             x = x.type(torch.FloatTensor).to(device)
