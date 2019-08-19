@@ -40,14 +40,14 @@ if __name__ == '__main__':
         out_file = os.path.join('images/alphamatting', file)
         cv.imwrite(out_file, img)
 
+        x_test = torch.zeros((1, 4, h, w), dtype=torch.float)
+        img = img[..., ::-1]  # RGB
+        img = transforms.ToPILImage()(img)
+        img = transformer(img)
+        x_test[0:, 0:3, :, :] = img
+
         for i in range(3):
             trimap = cv.imread(os.path.join(TRIMAP_FOLDERS[i], file), 0)
-
-            x_test = torch.zeros((1, 4, h, w), dtype=torch.float)
-            img = img[..., ::-1]  # RGB
-            img = transforms.ToPILImage()(img)
-            img = transformer(img)
-            x_test[0:, 0:3, :, :] = img
             x_test[0:, 3, :, :] = torch.from_numpy(trimap.copy()) / 255.
 
             with torch.no_grad():
