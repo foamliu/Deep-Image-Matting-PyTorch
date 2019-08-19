@@ -35,6 +35,7 @@ if __name__ == '__main__':
     for file in tqdm(files):
         filename = os.path.join(IMG_FOLDER, file)
         img = cv.imread(filename)
+        print(img.shape)
         h, w = img.shape[:2]
 
         x = torch.zeros((1, 4, h, w), dtype=torch.float)
