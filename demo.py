@@ -69,20 +69,20 @@ if __name__ == '__main__':
 
         x = torch.zeros((1, 4, h, w), dtype=torch.float)
         image = img[..., ::-1]  # RGB
-        image = transforms.ToPILImage()(image)  # [3, 320, 320]
-        image = transformer(image)  # [3, 320, 320]
+        image = transforms.ToPILImage()(image)
+        image = transformer(image)
         x[0:, 0:3, :, :] = image
         x[0:, 3, :, :] = torch.from_numpy(trimap.copy()) / 255.
 
         # Move to GPU, if available
-        x = x.type(torch.FloatTensor).to(device)  # [1, 4, 320, 320]
+        x = x.type(torch.FloatTensor).to(device)
         alpha = alpha / 255.
 
         with torch.no_grad():
-            pred = model(x)  # [1, 4, 320, 320]
+            pred = model(x)
 
         pred = pred.cpu().numpy()
-        pred = pred.reshape((h, w))  # [320, 320]
+        pred = pred.reshape((h, w))
 
         pred[trimap == 0] = 0.0
         pred[trimap == 255] = 1.0

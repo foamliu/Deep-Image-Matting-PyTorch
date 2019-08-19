@@ -40,26 +40,30 @@ if __name__ == '__main__':
         out_file = os.path.join('images/alphamatting', file)
         cv.imwrite(out_file, img)
 
-        x_test = torch.zeros((1, 4, h, w), dtype=torch.float)
-        img = img[..., ::-1]  # RGB
-        img = transforms.ToPILImage()(img)
-        img = transformer(img)
-        x_test[0:, 0:3, :, :] = img
+        x = torch.zeros((1, 4, h, w), dtype=torch.float)
+        image = img[..., ::-1]  # RGB
+        image = transforms.ToPILImage()(image)
+        image = transformer(image)
+        x[0:, 0:3, :, :] = image
 
         for i in range(3):
             trimap = cv.imread(os.path.join(TRIMAP_FOLDERS[i], file), 0)
-            x_test[0:, 3, :, :] = torch.from_numpy(trimap.copy()) / 255.
+            x[0:, 3, :, :] = torch.from_numpy(trimap.copy()) / 255.
+
+            # Move to GPU, if available
+            x = x.type(torch.FloatTensor).to(device)
+            alpha = alpha / 255.
 
             with torch.no_grad():
-                y_pred = model(x_test)
+                pred = model(x)
 
-            y_pred = y_pred.cpu().numpy()
-            y_pred = np.reshape(y_pred, (h, w))
-            y_pred[trimap == 0] = 0.0
-            y_pred[trimap == 255] = 1.0
+            pred = pred.cpu().numpy()
+            pred = pred.reshape((h, w))
 
-            y_pred = y_pred * 255.
-            y_pred = y_pred.astype(np.uint8)
+            pred[trimap == 0] = 0.0
+            pred[trimap == 255] = 1.0
+
+            out = (pred.copy() * 255).astype(np.uint8)
 
             filename = os.path.join(OUTPUT_FOLDERS[i], file)
-            cv.imwrite(filename, y_pred)
+            cv.imwrite(filename, out)
