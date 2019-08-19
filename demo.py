@@ -104,8 +104,9 @@ if __name__ == '__main__':
         wratio = w / bw
         hratio = h / bh
         ratio = wratio if wratio > hratio else hratio
+        print('ratio: ' + str(ratio))
         if ratio > 1:
-            bg = cv.resize(src=bg, dsize=(math.ceil(bw * ratio), math.ceil(bh * ratio)), interpolation=cv.INTER_CUBIC)
+            new_bg = cv.resize(src=new_bg, dsize=(math.ceil(bw * ratio), math.ceil(bh * ratio)), interpolation=cv.INTER_CUBIC)
 
         im, bg = composite4(img, new_bg, pred, w, h)
         cv.imwrite('images/{}_compose.png'.format(i), im)
