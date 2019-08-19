@@ -7,9 +7,10 @@ import numpy as np
 import torch
 from torchvision import transforms
 
-from config import device, im_size
-from data_gen import data_transforms, gen_trimap, random_choice, get_alpha_test
+from config import device, im_size, fg_path_test, a_path_test, bg_path_test
+from data_gen import data_transforms, gen_trimap, fg_test_files, bg_test_files
 from utils import compute_mse, compute_sad, ensure_folder, safe_crop, draw_str
+from test import gen_test_names, process_test
 
 
 def composite4(fg, bg, a, w, h):
@@ -40,86 +41,61 @@ if __name__ == '__main__':
 
     ensure_folder('images')
 
-    out_test_path = 'data/merged_test/'
-    test_images = [f for f in os.listdir(out_test_path) if
-                   os.path.isfile(os.path.join(out_test_path, f)) and f.endswith('.png')]
-    samples = random.sample(test_images, 10)
+    names = gen_test_names()
+    names = random.sample(names, 10)
 
-    bg_test = 'data/bg_test/'
-    test_bgs = [f for f in os.listdir(bg_test) if
-                os.path.isfile(os.path.join(bg_test, f)) and f.endswith('.jpg')]
-    sample_bgs = random.sample(test_bgs, 10)
+    for i, name in enumerate(names):
+        fcount = int(name.split('.')[0].split('_')[0])
+        bcount = int(name.split('.')[0].split('_')[1])
+        im_name = fg_test_files[fcount]
+        bg_name = bg_test_files[bcount]
+        img, alpha, fg, bg = process_test(im_name, bg_name)
 
-    total_loss = 0.0
-    for i in range(len(samples)):
-        filename = samples[i]
-        image_name = filename.split('.')[0]
+        print('\nStart processing image: {}'.format(name))
 
-        print('\nStart processing image: {}'.format(filename))
+        h, w = img.shape[:2]
 
-        bgr_img = cv.imread(os.path.join(out_test_path, filename))
-        bg_h, bg_w = bgr_img.shape[:2]
-        print('bg_h, bg_w: ' + str((bg_h, bg_w)))
-
-        a = get_alpha_test(image_name)
-        a_h, a_w = a.shape[:2]
-        print('a_h, a_w: ' + str((a_h, a_w)))
-
-        alpha = np.zeros((bg_h, bg_w), np.float32)
-        alpha[0:a_h, 0:a_w] = a
         trimap = gen_trimap(alpha)
-        different_sizes = [(320, 320), (320, 320), (320, 320), (480, 480), (640, 640)]
-        crop_size = random.choice(different_sizes)
-        x, y = random_choice(trimap, crop_size)
-        print('x, y: ' + str((x, y)))
 
-        bgr_img = safe_crop(bgr_img, x, y, crop_size)
-        alpha = safe_crop(alpha, x, y, crop_size)
-        trimap = safe_crop(trimap, x, y, crop_size).astype(np.uint8)
-        cv.imwrite('images/{}_image.png'.format(i), np.array(bgr_img).astype(np.uint8))
-        cv.imwrite('images/{}_trimap.png'.format(i), trimap)
-        cv.imwrite('images/{}_alpha.png'.format(i), np.array(alpha).astype(np.uint8))
+        x = torch.zeros((1, 4, h, w), dtype=torch.float)
+        img = img[..., ::-1]  # RGB
+        img = transforms.ToPILImage()(img)  # [3, 320, 320]
+        img = transformer(img)  # [3, 320, 320]
+        x[0:, 0:3, :, :] = img
+        x[0:, 3, :, :] = torch.from_numpy(trimap.copy()) / 255.
 
-        x_test = torch.zeros((1, 4, im_size, im_size), dtype=torch.float)
-        img = bgr_img[..., ::-1]  # RGB
-        img = transforms.ToPILImage()(img)
-        img = transformer(img)
-        x_test[0, 0:3, :, :] = img
-        x_test[0, 3, :, :] = torch.from_numpy(trimap.copy()) / 255.
-        x_test = x_test.to(device)
-
-        print(x_test.size())
+        # Move to GPU, if available
+        x = x.type(torch.FloatTensor).to(device)  # [1, 4, 320, 320]
+        alpha = alpha / 255.
 
         with torch.no_grad():
-            y_pred = model(x_test)
+            pred = model(x)  # [1, 4, 320, 320]
 
-        y_pred = y_pred.cpu().numpy()
-        print('y_pred.shape: ' + str(y_pred.shape))
-        y_pred = np.reshape(y_pred, (im_size, im_size))
-        print(y_pred.shape)
+        pred = pred.cpu().numpy()
+        pred = pred.reshape((h, w))  # [320, 320]
 
-        y_pred[trimap == 0] = 0.0
-        y_pred[trimap == 255] = 1.0
+        pred[trimap == 0] = 0.0
+        pred[trimap == 255] = 1.0
 
-        alpha = alpha / 255.  # [0., 1.]
-
-        sad = compute_sad(y_pred, alpha)
-        mse = compute_mse(y_pred, alpha, trimap)
-        str_msg = 'sad: %.4f, mse: %.4f, size: %s' % (sad, mse, str(crop_size))
+        # Calculate loss
+        # loss = criterion(alpha_out, alpha_label)
+        mse_loss = compute_mse(pred, alpha, trimap)
+        sad_loss = compute_sad(pred, alpha)
+        str_msg = 'sad: %.4f, mse: %.4f' % (sad_loss, mse_loss)
         print(str_msg)
 
-        out = (y_pred * 255).astype(np.uint8)
+        out = (pred.copy() * 255).astype(np.uint8)
         draw_str(out, (10, 20), str_msg)
         cv.imwrite('images/{}_out.png'.format(i), out)
 
-        sample_bg = sample_bgs[i]
-        bg = cv.imread(os.path.join(bg_test, sample_bg))
-        bh, bw = bg.shape[:2]
-        wratio = im_size / bw
-        hratio = im_size / bh
-        ratio = wratio if wratio > hratio else hratio
-        if ratio > 1:
-            bg = cv.resize(src=bg, dsize=(math.ceil(bw * ratio), math.ceil(bh * ratio)), interpolation=cv.INTER_CUBIC)
-        im, bg = composite4(bgr_img, bg, y_pred, im_size, im_size)
-        cv.imwrite('images/{}_compose.png'.format(i), im)
-        cv.imwrite('images/{}_new_bg.png'.format(i), bg)
+        # sample_bg = sample_bgs[i]
+        # bg = cv.imread(os.path.join(bg_test, sample_bg))
+        # bh, bw = bg.shape[:2]
+        # wratio = im_size / bw
+        # hratio = im_size / bh
+        # ratio = wratio if wratio > hratio else hratio
+        # if ratio > 1:
+        #     bg = cv.resize(src=bg, dsize=(math.ceil(bw * ratio), math.ceil(bh * ratio)), interpolation=cv.INTER_CUBIC)
+        # im, bg = composite4(bgr_img, bg, y_pred, im_size, im_size)
+        # cv.imwrite('images/{}_compose.png'.format(i), im)
+        # cv.imwrite('images/{}_new_bg.png'.format(i), bg)
