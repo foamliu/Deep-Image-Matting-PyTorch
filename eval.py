@@ -45,7 +45,9 @@ if __name__ == '__main__':
         x[0:, 0:3, :, :] = image
 
         for i in range(3):
-            trimap = cv.imread(os.path.join(TRIMAP_FOLDERS[i], file), 0)
+            filename = os.path.join(TRIMAP_FOLDERS[i], file)
+            print('reading {}...'.format(filename))
+            trimap = cv.imread(filename, 0)
             x[0:, 3, :, :] = torch.from_numpy(trimap.copy()) / 255.
 
             # Move to GPU, if available
@@ -64,3 +66,4 @@ if __name__ == '__main__':
 
             filename = os.path.join(OUTPUT_FOLDERS[i], file)
             cv.imwrite(filename, out)
+            print('wrote {}.'.format(filename))
