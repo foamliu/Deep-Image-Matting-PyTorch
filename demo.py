@@ -7,13 +7,14 @@ import numpy as np
 import torch
 from torchvision import transforms
 
-from config import device, im_size, fg_path_test, a_path_test, bg_path_test
+from config import device
 from data_gen import data_transforms, gen_trimap, fg_test_files, bg_test_files
-from utils import compute_mse, compute_sad, ensure_folder, safe_crop, draw_str
 from test import gen_test_names, process_test
+from utils import compute_mse, compute_sad, ensure_folder, draw_str
 
 
 def composite4(fg, bg, a, w, h):
+    print(fg.shape, bg.shape, a.shape, w, h)
     fg = np.array(fg, np.float32)
     bg_h, bg_w = bg.shape[:2]
     x = 0
@@ -46,7 +47,7 @@ if __name__ == '__main__':
 
     bg_test = 'data/bg_test/'
     new_bgs = [f for f in os.listdir(bg_test) if
-                os.path.isfile(os.path.join(bg_test, f)) and f.endswith('.jpg')]
+               os.path.isfile(os.path.join(bg_test, f)) and f.endswith('.jpg')]
     new_bgs = random.sample(new_bgs, 10)
 
     for i, name in enumerate(names):
