@@ -20,7 +20,7 @@ Deep Image Matting [paper](https://arxiv.org/abs/1703.03872) implementation in P
 |paper-stage0|59.6|0.019||
 |paper-stage1|54.6|0.017||
 |paper-stage3|50.4|0.014||
-|my-stage0|37.7|0.012|[Link]()|
+|my-stage0|<b>37.7</b>|<b>0.012</b>|[Link]()|
 
 ## Dependencies
 
