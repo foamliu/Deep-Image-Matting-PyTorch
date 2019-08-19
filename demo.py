@@ -59,11 +59,11 @@ if __name__ == '__main__':
 
         bgr_img = cv.imread(os.path.join(out_test_path, filename))
         bg_h, bg_w = bgr_img.shape[:2]
-        # print('bg_h, bg_w: ' + str((bg_h, bg_w)))
+        print('bg_h, bg_w: ' + str((bg_h, bg_w)))
 
         a = get_alpha_test(image_name)
         a_h, a_w = a.shape[:2]
-        # print('a_h, a_w: ' + str((a_h, a_w)))
+        print('a_h, a_w: ' + str((a_h, a_w)))
 
         alpha = np.zeros((bg_h, bg_w), np.float32)
         alpha[0:a_h, 0:a_w] = a
@@ -71,7 +71,7 @@ if __name__ == '__main__':
         different_sizes = [(320, 320), (320, 320), (320, 320), (480, 480), (640, 640)]
         crop_size = random.choice(different_sizes)
         x, y = random_choice(trimap, crop_size)
-        # print('x, y: ' + str((x, y)))
+        print('x, y: ' + str((x, y)))
 
         bgr_img = safe_crop(bgr_img, x, y, crop_size)
         alpha = safe_crop(alpha, x, y, crop_size)
@@ -86,6 +86,7 @@ if __name__ == '__main__':
         img = transformer(img)
         x_test[0, 0:3, :, :] = img
         x_test[0, 3, :, :] = torch.from_numpy(trimap.copy()) / 255.
+        x_test = x_test.to(device)
 
         print(x_test.size())
 
@@ -93,9 +94,9 @@ if __name__ == '__main__':
             y_pred = model(x_test)
 
         y_pred = y_pred.cpu().numpy()
-        # print('y_pred.shape: ' + str(y_pred.shape))
+        print('y_pred.shape: ' + str(y_pred.shape))
         y_pred = np.reshape(y_pred, (im_size, im_size))
-        # print(y_pred.shape)
+        print(y_pred.shape)
 
         y_pred[trimap == 0] = 0.0
         y_pred[trimap == 255] = 1.0
