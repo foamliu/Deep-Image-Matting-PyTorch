@@ -49,6 +49,8 @@ if __name__ == '__main__':
             print('reading {}...'.format(filename))
             trimap = cv.imread(filename, 0)
             x[0:, 3, :, :] = torch.from_numpy(trimap.copy()) / 255.
+            print(torch.max(x[0:, 3, :, :]))
+            print(torch.min(x[0:, 3, :, :]))
 
             # Move to GPU, if available
             x = x.type(torch.FloatTensor).to(device)
