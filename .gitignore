@@ -2,7 +2,6 @@
 __pycache__/
 BEST_checkpoint.tar
 checkpoint.tar
-data/
 nohup.out
 runs/
 train_names.txt
