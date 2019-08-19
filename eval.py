@@ -52,7 +52,6 @@ if __name__ == '__main__':
 
             # Move to GPU, if available
             x = x.type(torch.FloatTensor).to(device)
-            alpha = alpha / 255.
 
             with torch.no_grad():
                 pred = model(x)
