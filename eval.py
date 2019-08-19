@@ -48,7 +48,7 @@ if __name__ == '__main__':
             filename = os.path.join(TRIMAP_FOLDERS[i], file)
             print('reading {}...'.format(filename))
             trimap = cv.imread(filename, 0)
-            x[0:, 3, :, :] = torch.from_numpy(trimap.copy()) / 255.
+            x[0:, 3, :, :] = torch.from_numpy(trimap.copy() / 255.)
             print(torch.max(x[0:, 3, :, :]))
             print(torch.min(x[0:, 3, :, :]))
             print(torch.median(x[0:, 3, :, :]))
