@@ -51,11 +51,15 @@ if __name__ == '__main__':
         bg_name = bg_test_files[bcount]
         img, alpha, fg, bg = process_test(im_name, bg_name)
 
+        cv.imwrite('images/{}_image.png'.format(i), img)
+        cv.imwrite('images/{}_alpha.png'.format(i), alpha)
+
         print('\nStart processing image: {}'.format(name))
 
         h, w = img.shape[:2]
 
         trimap = gen_trimap(alpha)
+        cv.imwrite('images/{}_trimap.png'.format(i), trimap)
 
         x = torch.zeros((1, 4, h, w), dtype=torch.float)
         img = img[..., ::-1]  # RGB
