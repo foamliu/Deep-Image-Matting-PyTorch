@@ -81,7 +81,8 @@ if __name__ == '__main__':
         cv.imwrite('images/{}_alpha.png'.format(i), np.array(alpha).astype(np.uint8))
 
         x_test = torch.zeros((1, 4, im_size, im_size), dtype=torch.float)
-        img = transforms.ToPILImage()(bgr_img)
+        img = bgr_img[..., ::-1]  # RGB
+        img = transforms.ToPILImage()(img)
         img = transformer(img)
         x_test[0:, 0:3, :, :] = img
         x_test[0:, 3, :, :] = torch.from_numpy(trimap.copy()) / 255.
