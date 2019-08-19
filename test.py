@@ -131,6 +131,7 @@ if __name__ == '__main__':
         # Keep track of metrics
         mse_losses.update(mse_loss.item())
         sad_losses.update(sad_loss.item())
+        print("sad:{} mse:{}".format(sad_loss.item(), mse_loss.item()))
         print("sad:{} mse:{}".format(sad_losses.avg, mse_losses.avg))
 
     print("sad:{} mse:{}".format(sad_losses.avg, mse_losses.avg))
