@@ -100,7 +100,7 @@ if __name__ == '__main__':
 
         new_bg = new_bgs[i]
         new_bg = cv.imread(os.path.join(bg_test, new_bg))
-        bh, bw = bg.shape[:2]
+        bh, bw = new_bg.shape[:2]
         wratio = w / bw
         hratio = h / bh
         ratio = wratio if wratio > hratio else hratio
