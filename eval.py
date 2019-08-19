@@ -37,9 +37,6 @@ if __name__ == '__main__':
         img = cv.imread(filename)
         h, w = img.shape[:2]
 
-        out_file = os.path.join('images/alphamatting', file)
-        cv.imwrite(out_file, img)
-
         x = torch.zeros((1, 4, h, w), dtype=torch.float)
         image = img[..., ::-1]  # RGB
         image = transforms.ToPILImage()(image)
