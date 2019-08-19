@@ -72,7 +72,7 @@ if __name__ == '__main__':
         image = transforms.ToPILImage()(image)
         image = transformer(image)
         x[0:, 0:3, :, :] = image
-        x[0:, 3, :, :] = torch.from_numpy(trimap.copy()) / 255.
+        x[0:, 3, :, :] = torch.from_numpy(trimap.copy() / 255.)
 
         # Move to GPU, if available
         x = x.type(torch.FloatTensor).to(device)

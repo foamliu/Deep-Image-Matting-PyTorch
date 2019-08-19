@@ -152,7 +152,7 @@ class DIMDataset(Dataset):
         img = transforms.ToPILImage()(img)
         img = self.transformer(img)
         x[0:3, :, :] = img
-        x[3, :, :] = torch.from_numpy(trimap.copy()) / 255.
+        x[3, :, :] = torch.from_numpy(trimap.copy() / 255.)
 
         y = np.empty((2, im_size, im_size), dtype=np.float32)
         y[0, :, :] = alpha / 255.
