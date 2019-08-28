@@ -25,7 +25,7 @@ Deep Image Matting [paper](https://arxiv.org/abs/1703.03872) implementation in P
 ## Dependencies
 
 - Python 3.5.2
-- PyTorch 1.0.0
+- PyTorch 1.1.0
 
 ## Dataset
 ### Adobe Deep Image Matting Dataset

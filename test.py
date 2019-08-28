@@ -110,7 +110,7 @@ if __name__ == '__main__':
         # print('trimap_name: ' + str(trimap_name))
 
         trimap = cv.imread('data/Combined_Dataset/Test_set/Adobe-licensed images/trimaps/' + trimap_name, 0)
-        print('trimap: ' + str(trimap))
+        # print('trimap: ' + str(trimap))
 
         i += 1
         if i == 20:
