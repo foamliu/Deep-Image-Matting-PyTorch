@@ -20,7 +20,7 @@ Deep Image Matting [paper](https://arxiv.org/abs/1703.03872) implementation in P
 |paper-stage0|59.6|0.019||
 |paper-stage1|54.6|0.017||
 |paper-stage3|50.4|0.014||
-|my-stage0|<b>66.8</b>|<b>0.024</b>|[Link](https://github.com/foamliu/Deep-Image-Matting-v2/releases/download/v1.0/BEST_checkpoint.tar)|
+|my-stage0|66.8|0.024|[Link](https://github.com/foamliu/Deep-Image-Matting-v2/releases/download/v1.0/BEST_checkpoint.tar)|
 
 ## Dependencies
 
