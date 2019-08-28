@@ -31,6 +31,24 @@ def composite4(fg, bg, a, w, h):
     return im, bg
 
 
+def composite4_test(fg, bg, a, w, h):
+    fg = np.array(fg, np.float32)
+    bg_h, bg_w = bg.shape[:2]
+    x = max(0, int((bg_w - w) / 2))
+    y = max(0, int((bg_h - h) / 2))
+    crop = np.array(bg[y:y + h, x:x + w], np.float32)
+    alpha = np.zeros((h, w, 1), np.float32)
+    alpha[:, :, 0] = a / 255.
+    im = alpha * fg + (1 - alpha) * crop
+    im = im.astype(np.uint8)
+
+    new_a = np.zeros((bg_h, bg_w), np.uint8)
+    new_a[y:y + h, x:x + w] = a
+    new_im = bg.copy()
+    new_im[y:y + h, x:x + w] = im
+    return new_im, new_a, fg, bg
+
+
 def process_test(im_name, bg_name):
     im = cv.imread(fg_path_test + im_name)
     a = cv.imread(a_path_test + im_name, 0)
