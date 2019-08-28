@@ -107,9 +107,9 @@ if __name__ == '__main__':
         # print(im_name)
         bg_name = bg_test_files[bcount]
         trimap_name = im_name.split('.')[0] + '_' + str(i) + '.png'
-        print('trimap_name: ' + str(trimap_name))
+        # print('trimap_name: ' + str(trimap_name))
 
-        trimap = cv.imread('data/test/trimaps/' + trimap_name, 0)
+        trimap = cv.imread('data/Combined_Dataset/Test_set/Adobe-licensed images/trimaps/' + trimap_name, 0)
         print('trimap: ' + str(trimap))
 
         i += 1
