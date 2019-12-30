@@ -1,4 +1,11 @@
 # Deep Image Matting
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![HitCount](http://hits.dwyl.io/foamliu/Deep-Image-Matting-PyTorch.svg)](http://hits.dwyl.io/foamliu/Deep-Image-Matting-PyTorch)
+![stars](https://img.shields.io/github/stars/foamliu/Deep-Image-Matting-PyTorch.svg?style=flat)
+![GitHub issues](https://img.shields.io/github/issues/foamliu/Deep-Image-Matting-PyTorch.svg)
+![GitHub repo size](https://img.shields.io/github/repo-size/foamliu/Deep-Image-Matting-PyTorch.svg)
+
+
 Deep Image Matting [paper](https://arxiv.org/abs/1703.03872) implementation in PyTorch.
 
 ## Differences
