@@ -133,13 +133,3 @@ Image/Trimap | Output/GT | New BG/Compose |
 |![image](https://github.com/foamliu/Deep-Image-Matting-PyTorch/raw/master/images/8_trimap.png) | ![image](https://github.com/foamliu/Deep-Image-Matting-PyTorch/raw/master/images/8_alpha.png) | ![image](https://github.com/foamliu/Deep-Image-Matting-PyTorch/raw/master/images/8_compose.png)|
 |![image](https://github.com/foamliu/Deep-Image-Matting-PyTorch/raw/master/images/9_image.png)  | ![image](https://github.com/foamliu/Deep-Image-Matting-PyTorch/raw/master/images/9_out.png)   | ![image](https://github.com/foamliu/Deep-Image-Matting-PyTorch/raw/master/images/9_new_bg.png) |
 |![image](https://github.com/foamliu/Deep-Image-Matting-PyTorch/raw/master/images/9_trimap.png) | ![image](https://github.com/foamliu/Deep-Image-Matting-PyTorch/raw/master/images/9_alpha.png) | ![image](https://github.com/foamliu/Deep-Image-Matting-PyTorch/raw/master/images/9_compose.png)|
-
-
-## 小小的赞助~
-<p align="center">
-	<img src="https://github.com/foamliu/Deep-Image-Matting-Pytorch/blob/master/sponsor.jpg" alt="Sample"  width="324" height="504">
-	<p align="center">
-		<em>若对您有帮助可给予小小的赞助~</em>
-	</p>
-</p>
-<br/><br/><br/>
